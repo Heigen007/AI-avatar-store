@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="PostgreSQL" id="Project-21c6" database="PostgreSQL" >
+	<schema name="public" >
+		<comment><![CDATA[standard public schema]]></comment>
+		<table name="avatar" spec="" >
+			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
+			<column name="name" type="text" jt="12" mandatory="y" />
+			<column name="role" type="text" jt="12" mandatory="y" />
+			<column name="personality" type="text" jt="12" />
+			<column name="photourl" type="text" jt="12" />
+			<index name="avatar_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<constraint name="avatar_role_check" type="CHECK" options="" >
+				<string><![CDATA[(role = ANY (ARRAY['friend'::text, 'lover'::text, 'mentor'::text]))]]></string>
+			</constraint>
+		</table>
+		<table name="chatmessage" spec="" >
+			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
+			<column name="sender" type="text" jt="12" mandatory="y" />
+			<column name="chat_session_id" type="integer" length="32" jt="4" />
+			<column name="timestamp" type="timestamp" length="6" jt="93" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<index name="chatmessage_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<constraint name="chatmessage_sender_check" type="CHECK" options="" >
+				<string><![CDATA[(sender = ANY (ARRAY['user'::text, 'avatar'::text]))]]></string>
+			</constraint>
+			<fk name="chatmessage_chat_session_id_fkey" to_schema="public" to_table="chatsession" delete_action="cascade" >
+				<fk_column name="chat_session_id" pk="id" />
+			</fk>
+		</table>
+		<table name="chatsession" spec="" >
+			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
+			<column name="avatar_id" type="integer" length="32" jt="4" />
+			<column name="user_profile_id" type="integer" length="32" jt="4" />
+			<index name="chatsession_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="chatsession_avatar_id_fkey" to_schema="public" to_table="avatar" delete_action="cascade" >
+				<fk_column name="avatar_id" pk="id" />
+			</fk>
+			<fk name="chatsession_user_profile_id_fkey" to_schema="public" to_table="userprofile" delete_action="cascade" >
+				<fk_column name="user_profile_id" pk="id" />
+			</fk>
+		</table>
+		<table name="userprofile" spec="" >
+			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
+			<column name="name" type="text" jt="12" mandatory="y" />
+			<column name="age" type="integer" length="32" jt="4" mandatory="y" />
+			<column name="bio" type="text" jt="12" />
+			<column name="createdat" type="timestamp" length="6" jt="93" >
+				<defo><![CDATA[now()]]></defo>
+			</column>
+			<index name="userprofile_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<sequence name="avatar_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="chatmessage_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="chatsession_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="userprofile_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
+	</schema>
+	<layout name="Main Layout" id="Layout-595" show_relation="cascade" >
+		<entity schema="public" name="avatar" color="BED3F4" x="464" y="48" />
+		<entity schema="public" name="chatmessage" color="BED3F4" x="240" y="240" />
+		<entity schema="public" name="chatsession" color="BED3F4" x="240" y="48" />
+		<entity schema="public" name="userprofile" color="BED3F4" x="48" y="240" />
+	</layout>
+</project>

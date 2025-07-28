@@ -1,1 +1,30 @@
 /* app global css */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 232, 240, 0.2); /* #00E8F0 */
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    backdrop-filter: blur(4px);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 232, 240, 0.4);
+}
+
+.glass-dialog {
+    background: rgba(10, 25, 47, 0.6); /* глубокий синий */
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e0f7fa;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 232, 240, 0.1);
+}

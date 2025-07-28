@@ -11,9 +11,12 @@
     "build": "quasar build"
   },
   "dependencies": {
+    "@capacitor/preferences": "^7.0.1",
     "@quasar/extras": "^1.16.4",
-    "axios": "^1.2.1",
+    "axios": "^1.11.0",
+    "keen-slider": "^6.8.6",
     "quasar": "^2.16.0",
+    "uuid": "^11.1.0",
     "vue": "^3.4.18",
     "vue-router": "^4.0.12"
   },
@@ -21,7 +24,9 @@
     "@capacitor/cli": "^7.4.2",
     "@quasar/app-vite": "^1.9.0",
     "@types/node": "^20.14.8",
-    "autoprefixer": "^10.4.2",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
     "typescript": "~5.5.4"
   },
   "engines": {

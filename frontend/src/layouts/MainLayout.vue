@@ -1,106 +1,85 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
-    <q-page-container>
-      <router-view />
+    <q-page-container class="relative overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
+      <router-view v-slot="{ Component, route }">
+        <transition :name="transitionName">
+          <component
+            :is="Component"
+            :key="route.fullPath"
+            class="absolute inset-0 w-full h-full"
+          />
+        </transition>
+      </router-view>
     </q-page-container>
+
+    <q-footer class="bg-white/5 backdrop-blur-xl border-t border-white/10 text-cyan-100">
+      <q-tabs
+        dense
+        align="justify"
+        class="text-cyan-300"
+        active-color="cyan-400"
+        indicator-color="cyan-400"
+      >
+        <q-route-tab label="Профиль" icon="person" to="/profile" />
+        <q-route-tab label="Аватары" icon="people" to="/home" />
+        <q-route-tab label="Чаты" icon="chat" to="/chats" />
+      </q-tabs>
+    </q-footer>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, { EssentialLinkProps } from 'components/EssentialLink.vue';
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 
-defineOptions({
-  name: 'MainLayout'
-});
+defineOptions({ name: 'MainLayout' })
 
-const linksList: EssentialLinkProps[] = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
+const route = useRoute()
+const transitionName = ref('slide-left')
 
-const leftDrawerOpen = ref(false);
+const tabsOrder = ['/profile', '/home', '/chats']
+let previousIndex = tabsOrder.indexOf(route.path)
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+watch(() => route.path, (toPath) => {
+    const currentIndex = tabsOrder.indexOf(toPath)
+
+    if (currentIndex > previousIndex) {
+        transitionName.value = 'slide-left'
+    } else if (currentIndex < previousIndex) {
+        transitionName.value = 'slide-right'
+    }
+
+    previousIndex = currentIndex
+})
 </script>
+
+<style scoped>
+/* Slide Left */
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+    transition: transform 0.2s ease;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* Slide Left */
+.slide-left-enter-from {
+    transform: translateX(100%);
+}
+.slide-left-leave-to {
+    transform: translateX(-100%);
+}
+
+/* Slide Right */
+.slide-right-enter-from {
+    transform: translateX(-100%);
+}
+.slide-right-leave-to {
+    transform: translateX(100%);
+}
+</style>
