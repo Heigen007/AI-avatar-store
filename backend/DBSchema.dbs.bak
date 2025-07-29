@@ -8,6 +8,15 @@
 			<column name="role" type="text" jt="12" mandatory="y" />
 			<column name="personality" type="text" jt="12" />
 			<column name="photourl" type="text" jt="12" />
+			<column name="create_date" type="date" jt="91" >
+				<defo><![CDATA[CURRENT_DATE]]></defo>
+			</column>
+			<column name="gender" type="varchar" jt="12" mandatory="y" >
+				<defo><![CDATA['male'::character varying]]></defo>
+			</column>
+			<column name="description" type="text" jt="12" >
+				<defo><![CDATA[''::text]]></defo>
+			</column>
 			<index name="avatar_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -22,6 +31,8 @@
 			<column name="timestamp" type="timestamp" length="6" jt="93" >
 				<defo><![CDATA[now()]]></defo>
 			</column>
+			<column name="text" type="text" jt="12" />
+			<column name="image_url" type="text" jt="12" />
 			<index name="chatmessage_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -36,6 +47,7 @@
 			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
 			<column name="avatar_id" type="integer" length="32" jt="4" />
 			<column name="user_profile_id" type="integer" length="32" jt="4" />
+			<column name="summary" type="text" jt="12" />
 			<index name="chatsession_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -51,8 +63,8 @@
 			<column name="name" type="text" jt="12" mandatory="y" />
 			<column name="age" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="bio" type="text" jt="12" />
-			<column name="createdat" type="timestamp" length="6" jt="93" >
-				<defo><![CDATA[now()]]></defo>
+			<column name="createdate" prior="createdat" type="timestamp" length="6" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
 			</column>
 			<index name="userprofile_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />

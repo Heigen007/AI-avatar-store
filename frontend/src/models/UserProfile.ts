@@ -2,6 +2,7 @@ import { Preferences } from '@capacitor/preferences'
 import { axios } from 'boot/axios'
 import { ChatSession } from './ChatSession'
 import { Ref, ref } from 'vue'
+import { Avatar } from './Avatar'
 
 export class UserProfile {
     static currentUser: UserProfile | null = null
@@ -27,6 +28,14 @@ export class UserProfile {
 
     getSessionBySessionId(sessionId: string): ChatSession | undefined {
         return this.chatSessions.value.find(s => s.id == sessionId)
+    }
+
+    getSessionByAvatarId(avatarId: string): ChatSession | undefined {
+        return this.chatSessions.value.find(s => s.avatar.id == avatarId)
+    }
+
+    getAvatarById(avatarId: string): Avatar | undefined {
+        return this.chatSessions.value.find(session => session.avatar.id == avatarId)?.avatar
     }
 
     removeAvatar(avatarId: string): void {

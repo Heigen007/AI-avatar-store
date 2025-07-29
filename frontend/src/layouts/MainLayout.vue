@@ -23,6 +23,7 @@
         <q-route-tab label="Профиль" icon="person" to="/profile" />
         <q-route-tab label="Аватары" icon="people" to="/home" />
         <q-route-tab label="Чаты" icon="chat" to="/chats" />
+        <q-route-tab label="Отзыв" icon="feedback" to="/feedback" />
       </q-tabs>
     </q-footer>
   </q-layout>

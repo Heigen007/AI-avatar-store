@@ -3,9 +3,8 @@ import { Avatar } from '../classes/Avatar';
 
 export async function createAvatar(req: Request, res: Response) {
     try {
-        const { name, role, personality, photoUrl, userId } = req.body;
-        const chatSession = await Avatar.create(name, role, personality, photoUrl, userId);
-        console.log('createAvatar response:', chatSession);
+        const { name, role, gender, personality, photoUrl, description, userId } = req.body;
+        const chatSession = await Avatar.create(name, role, gender, personality, photoUrl, description, userId);
         
         res.status(201).json({ sessionId: chatSession.id, avatarId: chatSession.avatar.id, avatar:{
             id: chatSession.avatar.id,

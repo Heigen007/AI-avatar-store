@@ -10,6 +10,7 @@ async function init(): Promise<void> {
     app.use(cors());
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
+    app.use('/api/uploads', express.static('public/uploads'));
 
     app.get('/api/', (req, res) => {
         res.send('AI Avatar API is running');

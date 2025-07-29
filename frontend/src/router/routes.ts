@@ -11,6 +11,7 @@ import HomePage from 'pages/HomePage.vue'
 import ChatPage from 'pages/ChatPage.vue'
 import ChatsPage from 'pages/ChatsPage.vue'
 import ErrorNotFound from 'pages/ErrorNotFound.vue'
+import FeedbackPage from 'pages/FeedbackPage.vue'
 
 const routes: RouteRecordRaw[] = [
     {
@@ -47,6 +48,16 @@ const routes: RouteRecordRaw[] = [
                 path: 'chats',
                 name: 'ChatsPage',
                 component: ChatsPage
+            },
+            {
+                path: '/avatar/:avatarId/edit',
+                name: 'EditAvatarPage',
+                component: () => import('pages/EditAvatarPage.vue')
+            },
+            {
+                path: '/feedback',
+                name: 'FeedbackPage',
+                component: () => FeedbackPage
             }
         ]
     },

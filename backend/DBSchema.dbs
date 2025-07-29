@@ -8,6 +8,15 @@
 			<column name="role" type="text" jt="12" mandatory="y" />
 			<column name="personality" type="text" jt="12" />
 			<column name="photourl" type="text" jt="12" />
+			<column name="create_date" type="date" jt="91" >
+				<defo><![CDATA[CURRENT_DATE]]></defo>
+			</column>
+			<column name="gender" type="varchar" jt="12" mandatory="y" >
+				<defo><![CDATA['male'::character varying]]></defo>
+			</column>
+			<column name="description" type="text" jt="12" >
+				<defo><![CDATA[''::text]]></defo>
+			</column>
 			<index name="avatar_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -23,6 +32,7 @@
 				<defo><![CDATA[now()]]></defo>
 			</column>
 			<column name="text" type="text" jt="12" />
+			<column name="image_url" type="text" jt="12" />
 			<index name="chatmessage_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -37,6 +47,7 @@
 			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
 			<column name="avatar_id" type="integer" length="32" jt="4" />
 			<column name="user_profile_id" type="integer" length="32" jt="4" />
+			<column name="summary" type="text" jt="12" />
 			<index name="chatsession_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -47,13 +58,23 @@
 				<fk_column name="user_profile_id" pk="id" />
 			</fk>
 		</table>
+		<table name="feedback" spec="" >
+			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
+			<column name="message" type="text" jt="12" mandatory="y" />
+			<column name="created_at" type="timestamp" length="6" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
+			</column>
+			<index name="feedback_pkey" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
 		<table name="userprofile" spec="" >
 			<column name="id" type="serial" length="32" jt="4" mandatory="y" />
 			<column name="name" type="text" jt="12" mandatory="y" />
 			<column name="age" type="integer" length="32" jt="4" mandatory="y" />
 			<column name="bio" type="text" jt="12" />
-			<column name="createdat" type="timestamp" length="6" jt="93" >
-				<defo><![CDATA[now()]]></defo>
+			<column name="createdate" prior="createdat" type="timestamp" length="6" jt="93" >
+				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
 			</column>
 			<index name="userprofile_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
@@ -62,12 +83,14 @@
 		<sequence name="avatar_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="chatmessage_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="chatsession_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="feedback_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="userprofile_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 	</schema>
 	<layout name="Main Layout" id="Layout-595" show_relation="cascade" >
 		<entity schema="public" name="avatar" color="BED3F4" x="464" y="48" />
 		<entity schema="public" name="chatmessage" color="BED3F4" x="240" y="240" />
 		<entity schema="public" name="chatsession" color="BED3F4" x="240" y="48" />
+		<entity schema="public" name="feedback" color="3986C1" x="848" y="224" />
 		<entity schema="public" name="userprofile" color="BED3F4" x="48" y="240" />
 	</layout>
 </project>

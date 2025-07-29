@@ -8,6 +8,7 @@ console.log(`System status: ${systemStatus}`)
 const testURL = 'http://127.0.0.1:3000/api'
 const prodURL = 'https://api.heylumi.kz/api'
 
+
 export const currentURL = systemStatus === 'test' ? testURL : prodURL
 
 const instance = axios.create({
