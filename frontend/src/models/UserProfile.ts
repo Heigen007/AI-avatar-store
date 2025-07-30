@@ -3,10 +3,14 @@ import { axios } from 'boot/axios'
 import { ChatSession } from './ChatSession'
 import { Ref, ref } from 'vue'
 import { Avatar } from './Avatar'
+import { App } from '@capacitor/app'
+import { Capacitor } from '@capacitor/core'
 
 export class UserProfile {
     static currentUser: UserProfile | null = null
     static currentUserId: number | null = null
+    static appVersion: string = ''
+    static requiredVersion: string = ''
 
     id: number
     name: string
@@ -64,6 +68,25 @@ export class UserProfile {
     }
 
     static async loadFromStorage(): Promise<UserProfile | null> {
+        // 1. Получаем текущую версию приложения
+        if (Capacitor.isNativePlatform()) {
+            try {
+                const info = await App.getInfo()
+                UserProfile.appVersion = info.version
+            } catch (e) {
+                console.error('Не удалось получить версию приложения', e)
+            }
+        }
+
+        // 2. Получаем минимально требуемую версию с сервера
+        try {
+            const versionRes = await axios.get('/version-check')
+            UserProfile.requiredVersion = versionRes.data.version || ''
+        } catch (e) {
+            console.warn('Не удалось получить минимальную версию с сервера', e)
+        }
+
+        // 3. Подгружаем профиль
         const { value } = await Preferences.get({ key: 'userId' })
         if (!value) return null
         UserProfile.currentUserId = parseInt(value)

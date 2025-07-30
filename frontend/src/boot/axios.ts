@@ -5,7 +5,7 @@ type TSystemStatus = 'test' | 'prod'
 // const systemStatus: TSystemStatus = window.location.href.includes('localhost') ? 'test' : 'prod'
 const systemStatus: TSystemStatus = 'prod'
 
-// const testURL = 'https://api.repliky.kz/api'
+// const testURL = 'http://127.0.0.1:3000/api'
 // const prodURL = 'https://api.repliky.kz/api'
 
 

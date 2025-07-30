@@ -16,6 +16,10 @@ async function init(): Promise<void> {
         res.send('AI Avatar API is running');
     });
 
+    app.get('/api/version-check', (req, res) => {
+        res.json({ version: '1.0.0', status: 'ok' });
+    });
+
     app.use('/api', globalRouter);
 
     app.listen(3000, '0.0.0.0', () => {

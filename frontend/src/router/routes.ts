@@ -12,6 +12,7 @@ import ChatPage from 'pages/ChatPage.vue'
 import ChatsPage from 'pages/ChatsPage.vue'
 import ErrorNotFound from 'pages/ErrorNotFound.vue'
 import FeedbackPage from 'pages/FeedbackPage.vue'
+import OutdatedPage from 'pages/OutdatedPage.vue'
 
 const routes: RouteRecordRaw[] = [
     {
@@ -24,6 +25,11 @@ const routes: RouteRecordRaw[] = [
                 component: OnboardingPage
             }
         ]
+    },
+    {
+        path: '/outdated',
+        name: 'OutdatedPage',
+        component: () => OutdatedPage
     },
     {
         path: '/',
