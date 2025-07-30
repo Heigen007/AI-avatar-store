@@ -3,7 +3,12 @@
     <q-page-container class="relative overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
       <router-view v-slot="{ Component, route }">
         <transition :name="transitionName">
+          <div v-if="isUnderMaintenance" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-center text-white px-6">
+            <div class="text-2xl font-semibold mb-4">Приложение на техническом обслуживании</div>
+            <div class="text-cyan-300">Пожалуйста, повторите попытку входа через 15 минут.</div>
+          </div>
           <component
+            v-else
             :is="Component"
             :key="route.fullPath"
             class="absolute inset-0 w-full h-full"
@@ -29,8 +34,10 @@
   </q-layout>
 </template>
 
+
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { UserProfile } from 'src/models/UserProfile'
+import { ref, watch, computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 defineOptions({ name: 'MainLayout' })
@@ -38,7 +45,7 @@ defineOptions({ name: 'MainLayout' })
 const route = useRoute()
 const transitionName = ref('slide-left')
 
-const tabsOrder = ['/profile', '/home', '/chats']
+const tabsOrder = ['/profile', '/home', '/chats', '/feedback']
 let previousIndex = tabsOrder.indexOf(route.path)
 
 watch(() => route.path, (toPath) => {
@@ -52,6 +59,8 @@ watch(() => route.path, (toPath) => {
 
     previousIndex = currentIndex
 })
+
+const isUnderMaintenance = computed(() => UserProfile.currentUser === null)
 </script>
 
 <style scoped>

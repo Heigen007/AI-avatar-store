@@ -6,6 +6,7 @@ import { Avatar } from './Avatar'
 
 export class UserProfile {
     static currentUser: UserProfile | null = null
+    static currentUserId: number | null = null
 
     id: number
     name: string
@@ -58,12 +59,14 @@ export class UserProfile {
 
         await Preferences.set({ key: 'userId', value: String(user.id) })
         UserProfile.currentUser = user
+        UserProfile.currentUserId = user.id
         return user
     }
 
     static async loadFromStorage(): Promise<UserProfile | null> {
         const { value } = await Preferences.get({ key: 'userId' })
         if (!value) return null
+        UserProfile.currentUserId = parseInt(value)
 
         try {
             const userId = parseInt(value)

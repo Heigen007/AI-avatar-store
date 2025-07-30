@@ -2,18 +2,18 @@ import { boot } from 'quasar/wrappers'
 import axios from 'axios'
 
 type TSystemStatus = 'test' | 'prod'
-const systemStatus: TSystemStatus = window.location.href.includes('localhost') ? 'test' : 'prod'
-console.log(`System status: ${systemStatus}`)
+// const systemStatus: TSystemStatus = window.location.href.includes('localhost') ? 'test' : 'prod'
+const systemStatus: TSystemStatus = 'prod'
 
-const testURL = 'http://127.0.0.1:3000/api'
-const prodURL = 'https://api.heylumi.kz/api'
+// const testURL = 'https://api.repliky.kz/api'
+// const prodURL = 'https://api.repliky.kz/api'
 
 
-export const currentURL = systemStatus === 'test' ? testURL : prodURL
+export const currentURL = 'https://api.repliky.kz/api'
 
 const instance = axios.create({
     baseURL: currentURL,
-    timeout: 180000
+    timeout: 120000
 })
 
 // 👇 правильный экспорт для Quasar

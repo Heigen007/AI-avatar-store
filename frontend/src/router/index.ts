@@ -29,7 +29,7 @@ export default route(async function () {
 
     // 4. Проверка авторизации
     Router.beforeEach((to, from, next) => {
-        const isAuthenticated = !!UserProfile.currentUser
+        const isAuthenticated = !!UserProfile.currentUserId
 
         if (!isAuthenticated && to.path !== '/onboarding') {
             return next('/onboarding')
