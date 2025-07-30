@@ -13,6 +13,7 @@ import ChatsPage from 'pages/ChatsPage.vue'
 import ErrorNotFound from 'pages/ErrorNotFound.vue'
 import FeedbackPage from 'pages/FeedbackPage.vue'
 import OutdatedPage from 'pages/OutdatedPage.vue'
+import EditAvatarPage from 'pages/EditAvatarPage.vue'
 
 const routes: RouteRecordRaw[] = [
     {
@@ -28,8 +29,14 @@ const routes: RouteRecordRaw[] = [
     },
     {
         path: '/outdated',
-        name: 'OutdatedPage',
-        component: () => OutdatedPage
+        component: OnboardingLayout,
+        children: [
+            {
+                path: '',
+                name: 'OutdatedPage',
+                component: OutdatedPage
+            }
+        ]
     },
     {
         path: '/',
@@ -58,12 +65,12 @@ const routes: RouteRecordRaw[] = [
             {
                 path: '/avatar/:avatarId/edit',
                 name: 'EditAvatarPage',
-                component: () => import('pages/EditAvatarPage.vue')
+                component: EditAvatarPage
             },
             {
                 path: '/feedback',
                 name: 'FeedbackPage',
-                component: () => FeedbackPage
+                component: FeedbackPage
             }
         ]
     },

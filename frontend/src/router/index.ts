@@ -31,8 +31,9 @@ export default route(async function () {
 
     Router.beforeEach((to, from, next) => {
         const isAuthenticated = !!UserProfile.currentUserId
-
+        alert(mustUpdate)
         if (mustUpdate && to.path !== '/outdated') {
+            alert(1)
             return next('/outdated')
         }
 
