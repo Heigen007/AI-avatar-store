@@ -9,8 +9,9 @@ import { Capacitor } from '@capacitor/core'
 export class UserProfile {
     static currentUser: UserProfile | null = null
     static currentUserId: number | null = null
-    static appVersion: string = '1.0.1'
+    static appVersion: string = '1.0.0'
     static requiredVersion: string = ''
+    static ready: Ref<boolean> = ref(false)
 
     id: number
     name: string
@@ -68,15 +69,12 @@ export class UserProfile {
     }
 
     static async loadFromStorage(): Promise<UserProfile | null> {
-        try {
         // 1. Получаем текущую версию приложения
         if (Capacitor.isNativePlatform()) {
             try {
                 const info = await App.getInfo()
                 UserProfile.appVersion = info.version
-                alert(`Текущая версия приложения: ${UserProfile.appVersion}`)
             } catch (e) {
-                alert(`Ошибка при получении версии приложения: ${e}`)
                 console.log('Ошибка при получении версии приложения:', e);
             }
         }
@@ -85,15 +83,16 @@ export class UserProfile {
         try {
             const versionRes = await axios.get('/version-check')
             UserProfile.requiredVersion = versionRes.data.version || ''
-            alert(`Минимально требуемая версия приложения: ${UserProfile.requiredVersion}`)
         } catch (e) {
-            alert(`Ошибка при получении версии с сервера: ${e}`)
             console.log('Ошибка при получении версии с сервера:', e);
         }
 
         // 3. Подгружаем профиль
         const { value } = await Preferences.get({ key: 'userId' })
-        if (!value) return null
+        if (!value) {
+            UserProfile.ready.value = true
+            return null // нет сохранённого пользователя
+        }
         UserProfile.currentUserId = parseInt(value)
 
         try {
@@ -110,14 +109,10 @@ export class UserProfile {
             const chatsRes = await axios.get(`/chats/${userId}`)
             user.chatSessions.value = chatsRes.data.map((s: any) => ChatSession.fromRaw(s))
             UserProfile.currentUser = user
+            UserProfile.ready.value = true
             return user
         } catch (err) {
             console.error('loadFromStorage error:', err)
-            return null
-        }
-    } catch (error) {
-        alert(`Ошибка при загрузке профиля: ${error}`)
-            console.error('Ошибка при загрузке профиля:', error)
             return null
         }
     }

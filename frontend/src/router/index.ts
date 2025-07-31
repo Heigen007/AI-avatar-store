@@ -10,13 +10,22 @@ import routes from './routes'
 import { UserProfile } from 'src/models/UserProfile'
 
 function versionsDiffer(local: string, required: string): boolean {
-    return local !== required
+    const localParts = local.split('.').map(Number)
+    const requiredParts = required.split('.').map(Number)
+
+    for (let i = 0; i < Math.max(localParts.length, requiredParts.length); i++) {
+        const l = localParts[i] || 0
+        const r = requiredParts[i] || 0
+        if (l < r) return true
+        if (l > r) return false
+    }
+
+    return false // equal
 }
+export default route(function () {
+    // Параллельная загрузка, не блокирует рендер
+    UserProfile.loadFromStorage().catch(console.error)
 
-export default route(async function () {
-    await UserProfile.loadFromStorage()
-
-    const mustUpdate = versionsDiffer(UserProfile.appVersion, UserProfile.requiredVersion)
     const createHistory = process.env.SERVER
         ? createMemoryHistory
         : (process.env.VUE_ROUTER_MODE === 'history'
@@ -29,19 +38,26 @@ export default route(async function () {
         history: createHistory(process.env.VUE_ROUTER_BASE)
     })
 
-    Router.beforeEach((to, from, next) => {
+    Router.beforeEach(async (to, from, next) => {
+        if (!UserProfile.ready.value) {
+            // ждём пока профиль загрузится
+            const waitReady = async () => {
+                while (!UserProfile.ready.value) {
+                    await new Promise(resolve => setTimeout(resolve, 20))
+                }
+            }
+
+            await waitReady()
+        }
+
         const isAuthenticated = !!UserProfile.currentUserId
-        alert(mustUpdate)
+        const mustUpdate = versionsDiffer(UserProfile.appVersion, UserProfile.requiredVersion)
+
         if (mustUpdate && to.path !== '/outdated') {
-            alert(1)
             return next('/outdated')
-        }
-
-        if (!isAuthenticated && to.path !== '/onboarding') {
+        } else if (!mustUpdate && !isAuthenticated && to.path !== '/onboarding') {
             return next('/onboarding')
-        }
-
-        if (isAuthenticated && to.path === '/') {
+        } else if (!mustUpdate && isAuthenticated && to.path === '/') {
             return next('/home')
         }
 
@@ -50,3 +66,4 @@ export default route(async function () {
 
     return Router
 })
+

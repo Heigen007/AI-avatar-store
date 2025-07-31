@@ -47,34 +47,19 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
-      target: {
-        browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
-        node: 'node20'
-      },
+        target: {
+            browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
+            node: 'node20'
+        },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
-      // vueRouterBase,
-      // vueDevtools,
-      // vueOptionsAPI: false,
-
-      // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
-
-      // publicPath: '/',
-      // analyze: true,
-      // env: {},
-      // rawDefine: {}
-      // ignorePublicFolder: true,
-      // minify: false,
-      // polyfillModulePreload: true,
-      // distDir
-
-      // extendViteConf (viteConf) {},
-      // viteVuePluginOptions: {},
-
-      
-      // vitePlugins: [
-      //   [ 'package-name', { ..pluginOptions.. }, { server: true, client: true } ]
-      // ]
+        vueRouterMode: 'hash', // available values: 'hash', 'history'
+        productName: 'Repliky',
+        extendPackageJson(pkg) {
+            pkg.name = 'repliky'
+            pkg.version = '1.0.0'
+            pkg.description = 'Общайся с персональным AI-аватаром!'
+            pkg.author = 'Grigoriy Kovrizhnykh <grisakovr@gmail.com>'
+        }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
@@ -189,7 +174,7 @@ module.exports = configure(function (/* ctx */) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'quasar-project'
+        appId: 'com.repliky.app'
       }
     },
 

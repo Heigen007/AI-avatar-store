@@ -1,6 +1,6 @@
 const config = {
     appId: 'org.capacitor.quasar.app',
-    appName: 'Quasar App',
+    appName: 'Repliky',
     webDir: 'dist/capacitor',
     bundledWebRuntime: false
 }
