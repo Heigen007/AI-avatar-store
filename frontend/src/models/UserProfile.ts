@@ -113,6 +113,7 @@ export class UserProfile {
             return user
         } catch (err) {
             console.error('loadFromStorage error:', err)
+            UserProfile.ready.value = true
             return null
         }
     }

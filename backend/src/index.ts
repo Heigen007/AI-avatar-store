@@ -11,6 +11,8 @@ async function init(): Promise<void> {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use('/api/uploads', express.static('public/uploads'));
+    app.use('/api/tts', express.static('public/tts'));
+
 
     app.get('/api/', (req, res) => {
         res.send('AI Avatar API is running');

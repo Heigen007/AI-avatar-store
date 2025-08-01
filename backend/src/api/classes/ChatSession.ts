@@ -11,6 +11,9 @@ export class ChatSession {
         public summary: string = ''
     ) {}
 
+    /**
+     * Получить все сессии чатов для конкретного пользователя
+     */
     static async getAllByUserId(userId: number): Promise<ChatSession[]> {
         return await DatabaseConnection.runTransaction(async (session) => {
             const result = await session.dbExecuteSelect(
@@ -25,14 +28,15 @@ export class ChatSession {
                     a.gender AS avatar_gender,
                     a.personality AS avatar_personality,
                     a.photourl AS avatar_photourl,
-                    a.description AS avatar_description
+                    a.description AS avatar_description,
+                    a.voice AS avatar_voice
                 FROM ChatSession cs
                 JOIN Avatar a ON cs.avatar_id = a.id
                 WHERE cs.user_profile_id = $1`,
                 [userId]
-            )
+            );
 
-            const sessions: ChatSession[] = []
+            const sessions: ChatSession[] = [];
 
             for (const row of result.sqlResultRows) {
                 const avatar = new Avatar(
@@ -42,10 +46,17 @@ export class ChatSession {
                     row.avatar_personality,
                     row.avatar_photourl,
                     row.avatar_gender,
-                    row.avatar_description
-                )
+                    row.avatar_description,
+                    row.avatar_voice
+                );
 
-                const chatSession = new ChatSession(row.session_id, avatar, userId, [], row.summary)
+                const chatSession = new ChatSession(
+                    row.session_id,
+                    avatar,
+                    userId,
+                    [],
+                    row.summary
+                );
 
                 const msgRes = await session.dbExecuteSelect(
                     `SELECT id, sender, text, timestamp, image_url
@@ -53,19 +64,29 @@ export class ChatSession {
                      WHERE chat_session_id = $1
                      ORDER BY timestamp ASC`,
                     [chatSession.id]
-                )
+                );
 
-                chatSession.messages = msgRes.sqlResultRows.map((m: any) => {
-                    return new ChatMessage(m.id, m.sender, chatSession.id, m.text, m.timestamp, m.image_url)
-                })
+                chatSession.messages = msgRes.sqlResultRows.map((m: any) =>
+                    new ChatMessage(
+                        m.id,
+                        m.sender,
+                        chatSession.id,
+                        m.text,
+                        m.timestamp,
+                        m.image_url
+                    )
+                );
 
-                sessions.push(chatSession)
+                sessions.push(chatSession);
             }
 
-            return sessions
-        })
+            return sessions;
+        });
     }
 
+    /**
+     * Получить одну сессию по ID
+     */
     static async getById(chatId: number): Promise<ChatSession | null> {
         return await DatabaseConnection.runTransaction(async (session) => {
             const result = await session.dbExecuteSelect(
@@ -80,15 +101,16 @@ export class ChatSession {
                     a.gender AS avatar_gender,
                     a.personality AS avatar_personality,
                     a.photourl AS avatar_photourl,
-                    a.description AS avatar_description
+                    a.description AS avatar_description,
+                    a.voice AS avatar_voice
                 FROM ChatSession cs
                 JOIN Avatar a ON cs.avatar_id = a.id
                 WHERE cs.id = $1`,
                 [chatId]
-            )
+            );
 
-            const row = result.sqlResultRows[0]
-            if (!row) return null
+            const row = result.sqlResultRows[0];
+            if (!row) return null;
 
             const avatar = new Avatar(
                 row.avatar_id,
@@ -97,8 +119,9 @@ export class ChatSession {
                 row.avatar_personality,
                 row.avatar_photourl,
                 row.avatar_gender,
-                row.avatar_description
-            )
+                row.avatar_description,
+                row.avatar_voice
+            );
 
             const messagesRes = await session.dbExecuteSelect(
                 `SELECT id, sender, text, timestamp, image_url
@@ -106,16 +129,26 @@ export class ChatSession {
                  WHERE chat_session_id = $1
                  ORDER BY timestamp ASC`,
                 [chatId]
-            )
+            );
 
             const messages = messagesRes.sqlResultRows.map((m: any) =>
-                new ChatMessage(m.id, m.sender, chatId, m.text, m.timestamp, m.image_url)
-            )
+                new ChatMessage(
+                    m.id,
+                    m.sender,
+                    chatId,
+                    m.text,
+                    m.timestamp,
+                    m.image_url
+                )
+            );
 
-            return new ChatSession(row.session_id, avatar, row.user_profile_id, messages, row.summary)
-        })
+            return new ChatSession(row.session_id, avatar, row.user_profile_id, messages, row.summary);
+        });
     }
 
+    /**
+     * Удалить чат-сессию по ID
+     */
     static async delete(id: number): Promise<void> {
         await DatabaseConnection.runTransaction(async (session) => {
             await session.dbExecuteDelete(
@@ -125,7 +158,15 @@ export class ChatSession {
         });
     }
 
-   static async create(avatarId: number, userProfileId: number, session: DatabaseConnection, avatar: Avatar): Promise<ChatSession> {
+    /**
+     * Создать новую чат-сессию
+     */
+    static async create(
+        avatarId: number,
+        userProfileId: number,
+        session: DatabaseConnection,
+        avatar: Avatar
+    ): Promise<ChatSession> {
         const result = await session.dbExecuteInsert(
             `INSERT INTO ChatSession (avatar_id, user_profile_id, summary)
              VALUES ($1, $2, '')
@@ -133,9 +174,13 @@ export class ChatSession {
             [avatarId, userProfileId]
         );
         const row = result.sqlResultRows[0];
+
         return new ChatSession(row.id, avatar, userProfileId, [], row.summary);
     }
 
+    /**
+     * Обновить сводку чата
+     */
     static async updateSummary(chatSessionId: number, summary: string): Promise<void> {
         await DatabaseConnection.runTransaction(async (session) => {
             await session.dbExecuteUpdate(

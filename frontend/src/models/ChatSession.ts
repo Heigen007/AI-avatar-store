@@ -58,7 +58,8 @@ export class ChatSession {
             raw.avatar.personality,
             raw.avatar.photoUrl,
             raw.avatar.gender,
-            raw.avatar.description
+            raw.avatar.description,
+            raw.avatar.voice
         )
 
         const session = new ChatSession(String(raw.id), avatar)

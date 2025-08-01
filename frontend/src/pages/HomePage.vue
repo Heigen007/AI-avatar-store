@@ -113,6 +113,31 @@
                 ></textarea>
             </div>
 
+            <!-- Голос -->
+            <div>
+                <label class="block mb-2 text-sm font-medium text-cyan-200">Голос аватара</label>
+                <div class="flex flex-wrap gap-3">
+                    <div
+                        v-for="voice in voiceOptions"
+                        :key="voice.value"
+                        class="flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer"
+                        :class="form.voice === voice.value
+                            ? 'bg-cyan-500 text-white border-cyan-500'
+                            : 'bg-white/5 text-cyan-300 border-white/20 hover:bg-white/10'"
+                        @click="form.voice = voice.value"
+                    >
+                        {{ voice.label }}
+                        <button
+                            type="button"
+                            class="ml-2 text-xs px-2 py-1 rounded bg-cyan-600 hover:bg-cyan-500"
+                            @click.stop="playVoice(voice.src)"
+                        >
+                            ▶
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Кнопка продолжить -->
             <div class="mt-8">
                 <button
@@ -139,6 +164,11 @@ const router = useRouter()
 
 const photoList = Array.from({ length: 12 }, (_, i) => `${i + 1}.jpg`)
 const selectedIndex = ref(0)
+
+function playVoice(src: string) {
+    const audio = new Audio(src)
+    audio.play()
+}
 
 const [containerRef, slider] = useKeenSlider({
     loop: true,
@@ -173,7 +203,8 @@ const form = ref({
     personality: '',
     photoUrl: photoList[0],
     gender: '',
-    description: ''
+    description: '',
+    voice: 'alloy'
 })
 
 const relationshipOptions = [
@@ -196,12 +227,26 @@ const genderOptions = [
     { label: 'Женский', value: 'female' }
 ]
 
+const voiceOptions = [
+    { label: '1', value: 'alloy', src: '/voices/1.mp3' },
+    { label: '2', value: 'ash', src: '/voices/2.mp3' },
+    { label: '3', value: 'ballad', src: '/voices/3.mp3' },
+    { label: '4', value: 'coral', src: '/voices/4.mp3' },
+    { label: '5', value: 'echo', src: '/voices/5.mp3' },
+    { label: '6', value: 'fable', src: '/voices/6.mp3' },
+    { label: '7', value: 'nova', src: '/voices/7.mp3' },
+    { label: '8', value: 'onyx', src: '/voices/8.mp3' },
+    { label: '9', value: 'sage', src: '/voices/9.mp3' },
+    { label: '10', value: 'shimmer', src: '/voices/10.mp3' }
+]
+
 const isValid = computed(() =>
     form.value.name.trim() !== '' &&
     form.value.personality !== '' &&
     form.value.photoUrl !== '' &&
     form.value.gender !== '' &&
-    form.value.role !== ''
+    form.value.role !== '' &&
+    form.value.voice !== ''
 )
 
 async function submit() {
@@ -211,7 +256,8 @@ async function submit() {
         form.value.gender as any,
         form.value.personality,
         form.value.photoUrl,
-        form.value.description
+        form.value.description,
+        form.value.voice
     )
 
     router.push({

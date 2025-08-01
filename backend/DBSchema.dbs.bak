@@ -82,14 +82,19 @@
 		</table>
 		<sequence name="avatar_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="avatar_id_seq1" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="avatar_id_seq2" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="chatmessage_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="chatmessage_id_seq1" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="chatmessage_id_seq2" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="chatsession_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="chatsession_id_seq1" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="chatsession_id_seq2" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="feedback_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="feedback_id_seq1" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="feedback_id_seq2" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="userprofile_id_seq" options="AS integer START WITH 1 INCREMENT BY 1" />
 		<sequence name="userprofile_id_seq1" options="AS integer START WITH 1 INCREMENT BY 1" />
+		<sequence name="userprofile_id_seq2" options="AS integer START WITH 1 INCREMENT BY 1" />
 	</schema>
 	<layout name="Main Layout" id="Layout-595" show_relation="cascade" >
 		<entity schema="public" name="avatar" color="BED3F4" x="464" y="48" />

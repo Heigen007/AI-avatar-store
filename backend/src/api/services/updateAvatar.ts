@@ -4,7 +4,7 @@ import { Avatar } from '../classes/Avatar';
 export async function updateAvatar(req: Request, res: Response) {
     try {
         const avatarId = parseInt(req.params.id);
-        const { name, role, gender, personality, photoUrl, description } = req.body;
+        const { name, role, gender, personality, photoUrl, description, voice } = req.body;
 
         await Avatar.updateById(avatarId, {
             name,
@@ -12,7 +12,8 @@ export async function updateAvatar(req: Request, res: Response) {
             gender,
             personality,
             photoUrl,
-            description
+            description,
+            voice
         });
 
         res.status(200).send('Avatar updated');

@@ -17,6 +17,7 @@
     "@capacitor/preferences": "^7.0.1",
     "@quasar/extras": "^1.16.4",
     "axios": "^1.11.0",
+    "capacitor-voice-recorder": "^7.0.6",
     "keen-slider": "^6.8.6",
     "quasar": "^2.16.0",
     "uuid": "^11.1.0",

@@ -1,5 +1,8 @@
 <template>
-    <div class="flex flex-col px-4 py-3 gap-4 bg-gradient-to-b from-[#0a1c2f] via-[#102f43] to-[#133c4f] text-white" style="height: 100%; padding-bottom: 70px;">
+    <div
+        class="flex flex-col px-4 py-3 gap-4 bg-gradient-to-b from-[#0a1c2f] via-[#102f43] to-[#133c4f] text-white"
+        style="height: 100%; padding-bottom: 70px;"
+    >
         <!-- Header -->
         <div class="flex items-center justify-between gap-4">
             <div class="flex items-center gap-4">
@@ -16,15 +19,25 @@
                 </div>
             </div>
 
-            <!-- Иконка редактирования -->
-            <button
-                @click="goToEditPage"
-                class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-cyan-300 border border-white/20 transition"
-            >
-                <q-icon name="edit" size="22px" class="text-cyan-300" />
-            </button>
-        </div>
+            <!-- Кнопки справа -->
+            <div class="flex items-center gap-2">
+                <!-- Кнопка голосового звонка -->
+                <button
+                    @click="openVoiceModal"
+                    class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-cyan-300 border border-white/20 transition"
+                >
+                    <q-icon name="mic" size="22px" class="text-cyan-300" />
+                </button>
 
+                <!-- Иконка редактирования -->
+                <button
+                    @click="goToEditPage"
+                    class="p-2 rounded-full bg-white/10 hover:bg-white/20 text-cyan-300 border border-white/20 transition"
+                >
+                    <q-icon name="edit" size="22px" class="text-cyan-300" />
+                </button>
+            </div>
+        </div>
 
         <!-- Chat scrollable area -->
         <div
@@ -86,22 +99,28 @@
             </button>
         </div>
 
+        <!-- Модалка голосового звонка -->
+        <VoiceCallModal
+            v-if="voiceModalOpen"
+            :session="session"
+            @close="voiceModalOpen = false"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { onMounted, reactive, ref, nextTick, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ChatMessage } from 'src/models/ChatMessage'
 import ChatBubble from 'src/components/ChatBubble.vue'
 import { UserProfile } from 'src/models/UserProfile'
-import { nextTick, watch } from 'vue'
 import { MessageSender } from 'src/utils/MessageSender'
-import { useRouter } from 'vue-router'
+import VoiceCallModal from 'src/components/VoiceCallModal.vue'
 
 const router = useRouter()
-const messageSender = new MessageSender()
 const route = useRoute()
+const messageSender = new MessageSender()
+
 const sessionId = route.params.sessionId as string
 const sessionRaw = UserProfile.currentUser?.getSessionBySessionId(sessionId)
 const session = reactive(sessionRaw!)
@@ -112,9 +131,20 @@ const isTyping = ref(false)
 const imageFile = ref<File | null>(null)
 const imagePreviewUrl = ref<string | null>(null)
 
+const voiceModalOpen = ref(false)
+
 function onFileSelected(event: Event) {
     const file = (event.target as HTMLInputElement).files?.[0]
     if (!file) return
+
+    // 🔹 Проверка на 5 МБ
+    const maxSizeMB = 5
+    if (file.size > maxSizeMB * 1024 * 1024) {
+        alert(`Файл слишком большой. Максимальный размер — ${maxSizeMB} МБ`)
+        ;(event.target as HTMLInputElement).value = '' // сбрасываем выбор
+        return
+    }
+
     imageFile.value = file
     imagePreviewUrl.value = URL.createObjectURL(file)
 }
@@ -138,7 +168,7 @@ function scrollToBottom() {
 onMounted(() => {
     setTimeout(() => {
         scrollToBottom()
-    }, 400);
+    }, 400)
 })
 
 async function sendMessage() {
@@ -174,5 +204,9 @@ watch(() => session.messages.length, () => {
 
 function goToEditPage() {
     router.push({ name: 'EditAvatarPage', params: { avatarId: session.avatar.id } })
+}
+
+function openVoiceModal() {
+    voiceModalOpen.value = true
 }
 </script>

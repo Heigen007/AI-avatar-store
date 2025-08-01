@@ -64,6 +64,7 @@
 			<column name="created_at" type="timestamp" length="6" jt="93" >
 				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
 			</column>
+			<column name="user_id" type="integer" jt="4" />
 			<index name="feedback_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>

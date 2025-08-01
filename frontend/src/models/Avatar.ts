@@ -11,6 +11,7 @@ export class Avatar {
     photoUrl: string
     gender: 'male' | 'female'
     description: string
+    voice: string
 
     constructor(
         id: string,
@@ -19,7 +20,8 @@ export class Avatar {
         personality: string,
         photoUrl: string,
         gender: 'male' | 'female',
-        description: string
+        description: string,
+        voice: string
     ) {
         this.id = id
         this.name = name
@@ -28,15 +30,20 @@ export class Avatar {
         this.photoUrl = photoUrl
         this.gender = gender
         this.description = description
+        this.voice = voice
     }
 
+    /**
+     * Создание нового аватара и чат-сессии
+     */
     static async createNewAvatar(
         name: string,
         role: AvatarRole,
         gender: 'male' | 'female',
         personality: string,
         photoUrl: string,
-        description: string
+        description: string,
+        voice: string
     ): Promise<ChatSession> {
         const res = await axios.post('/avatar', {
             name,
@@ -45,19 +52,32 @@ export class Avatar {
             personality,
             photoUrl,
             description,
+            voice,
             userId: UserProfile.currentUser?.id || 0
         })
 
         const sessionId = res.data.sessionId
         const avatarId = res.data.avatarId
 
-        const avatar = new Avatar(avatarId, name, role, personality, photoUrl, gender, description)
+        const avatar = new Avatar(
+            avatarId,
+            name,
+            role,
+            personality,
+            photoUrl,
+            gender,
+            description,
+            voice
+        )
 
         const session = new ChatSession(sessionId, avatar)
         UserProfile.currentUser!.addChatSession(session)
         return session
     }
 
+    /**
+     * Обновление существующего аватара
+     */
     static async updateAvatar(
         avatar: Avatar,
         name: string,
@@ -65,7 +85,8 @@ export class Avatar {
         gender: 'male' | 'female',
         personality: string,
         photoUrl: string,
-        description: string
+        description: string,
+        voice: string
     ): Promise<void> {
         await axios.put(`/avatar/${avatar.id}`, {
             name,
@@ -73,22 +94,39 @@ export class Avatar {
             gender,
             personality,
             photoUrl,
-            description
+            description,
+            voice
         })
-        avatar.updateDetails(name, role, gender, personality, photoUrl, description)
+
+        avatar.updateDetails(name, role, gender, personality, photoUrl, description, voice)
     }
 
+    /**
+     * Удаление аватара
+     */
     static async deleteAvatarById(avatarId: string): Promise<void> {
         await axios.delete(`/avatar/${avatarId}`)
         UserProfile.currentUser?.removeAvatar(avatarId)
     }
 
-    updateDetails(name: string, role: AvatarRole, gender: 'male' | 'female', personality: string, photoUrl: string, description: string) {
+    /**
+     * Локальное обновление данных аватара
+     */
+    updateDetails(
+        name: string,
+        role: AvatarRole,
+        gender: 'male' | 'female',
+        personality: string,
+        photoUrl: string,
+        description: string,
+        voice: string
+    ) {
         this.name = name
         this.role = role
         this.gender = gender
         this.personality = personality
         this.photoUrl = photoUrl
         this.description = description
+        this.voice = voice
     }
 }

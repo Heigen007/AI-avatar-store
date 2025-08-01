@@ -76,6 +76,31 @@
                 </div>
             </div>
 
+            <!-- Голос -->
+            <div>
+                <label class="block mb-2 text-sm font-medium text-cyan-200">Голос аватара</label>
+                <div class="flex flex-wrap gap-3">
+                    <div
+                        v-for="voice in voiceOptions"
+                        :key="voice.value"
+                        class="flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer"
+                        :class="form.voice === voice.value
+                            ? 'bg-cyan-500 text-white border-cyan-500'
+                            : 'bg-white/5 text-cyan-300 border-white/20 hover:bg-white/10'"
+                        @click="form.voice = voice.value"
+                    >
+                        {{ voice.label }}
+                        <button
+                            type="button"
+                            class="ml-2 text-xs px-2 py-1 rounded bg-cyan-600 hover:bg-cyan-500"
+                            @click.stop="playVoice(voice.src)"
+                        >
+                            ▶
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Описание -->
             <div>
                 <label class="block mb-2 text-sm font-medium text-cyan-200">Описание (необязательно)</label>
@@ -127,7 +152,7 @@
 import 'keen-slider/keen-slider.min.css'
 import { useKeenSlider } from 'keen-slider/vue'
 import { Avatar } from 'src/models/Avatar'
-import { ref, computed, onMounted, reactive } from 'vue'
+import { ref, computed, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { UserProfile } from 'src/models/UserProfile'
 
@@ -141,19 +166,33 @@ const session = reactive(sessionRaw!)
 const photoList = Array.from({ length: 12 }, (_, i) => `${i + 1}.jpg`)
 const selectedIndex = ref(0)
 
+const voiceOptions = [
+    { label: '1', value: 'alloy', src: '/voices/1.mp3' },
+    { label: '2', value: 'ash', src: '/voices/2.mp3' },
+    { label: '3', value: 'ballad', src: '/voices/3.mp3' },
+    { label: '4', value: 'coral', src: '/voices/4.mp3' },
+    { label: '5', value: 'echo', src: '/voices/5.mp3' },
+    { label: '6', value: 'fable', src: '/voices/6.mp3' },
+    { label: '7', value: 'nova', src: '/voices/7.mp3' },
+    { label: '8', value: 'onyx', src: '/voices/8.mp3' },
+    { label: '9', value: 'sage', src: '/voices/9.mp3' },
+    { label: '10', value: 'shimmer', src: '/voices/10.mp3' }
+]
+
 const form = ref({
     name: currentAvatar?.name || '',
     role: currentAvatar?.role || 'friend',
     gender: currentAvatar?.gender || 'male',
     personality: currentAvatar?.personality || '',
     description: currentAvatar?.description || '',
-    photoUrl: currentAvatar?.photoUrl || photoList[0]
-})
+    photoUrl: currentAvatar?.photoUrl || photoList[0],
+    voice: currentAvatar?.voice || 'alloy'
+}) as any;
 
 const [containerRef, slider] = useKeenSlider({
     loop: true,
     slides: { perView: 3, spacing: 15, origin: 'center' },
-    created(s) {
+    created() {
         selectedIndex.value = photoList.indexOf(form.value.photoUrl)
     },
     slideChanged(s) {
@@ -168,16 +207,21 @@ function selectSlide(index: number) {
     }
 }
 
+function playVoice(src: string) {
+    const audio = new Audio(src)
+    audio.play()
+}
+
 const relationshipOptions = [
     { label: 'Друг', value: 'friend' },
     { label: 'Любовь', value: 'lover' },
     { label: 'Ментор', value: 'mentor' }
-] as any
+]
 
 const genderOptions = [
     { label: 'Мужской', value: 'male' },
     { label: 'Женский', value: 'female' }
-] as any
+]
 
 const personalityOptions = [
     { label: 'Спокойный и заботливый', value: 'gentle' },
@@ -188,7 +232,11 @@ const personalityOptions = [
     { label: 'Аналитичный и логичный', value: 'logical' }
 ]
 
-const isValid = computed(() => form.value.name.trim() !== '' && form.value.personality !== '')
+const isValid = computed(() =>
+    form.value.name.trim() !== '' &&
+    form.value.personality !== '' &&
+    form.value.voice !== ''
+)
 
 async function updateAvatar() {
     await Avatar.updateAvatar(
@@ -198,7 +246,8 @@ async function updateAvatar() {
         form.value.gender,
         form.value.personality,
         form.value.photoUrl,
-        form.value.description
+        form.value.description,
+        form.value.voice
     )
     router.push({ name: 'ChatPage', params: { sessionId: session.id } })
 }

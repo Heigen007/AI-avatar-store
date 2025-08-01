@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { axios } from 'boot/axios'
+import { UserProfile } from 'src/models/UserProfile'
 
 const message = ref('')
 const loading = ref(false)
@@ -52,7 +53,7 @@ async function sendFeedback() {
     error.value = false
 
     try {
-        await axios.post('/feedback', { message: message.value })
+        await axios.post('/feedback', { message: message.value, userId: UserProfile.currentUser?.id })
         success.value = true
         message.value = ''
     } catch (err) {
