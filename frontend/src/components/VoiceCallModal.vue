@@ -96,6 +96,7 @@ async function startRecording() {
             }
             await VoiceRecorder.startRecording()
         } catch (err) {
+            alert('Native audio recording error: ' + err)
             console.error('Native audio recording error', err)
             isRecording.value = false
         }
@@ -111,27 +112,48 @@ async function startRecording() {
 
 /**
  * Остановка записи
+ *//**
+ * Остановка записи
  */
 async function stopRecording() {
     if (!isRecording.value) return
     isRecording.value = false
 
+    alert('STOP RECORDING')
+
     const isNative = Capacitor.isNativePlatform()
     if (isNative) {
         try {
             const result = await VoiceRecorder.stopRecording()
+            alert('Получил результат записи от VoiceRecorder')
+
             if (result.value && result.value.recordDataBase64) {
+                alert('Конвертирую base64 → Blob')
+
+                // VoiceRecorder пишет AAC → упаковываем в m4a
                 const blob = base64ToBlob(result.value.recordDataBase64, 'audio/m4a')
-                await sendVoiceMessage(blob)
+                const fileName = `voice-${Date.now()}.m4a`
+                const file = new File([blob], fileName, { type: 'audio/m4a' })
+
+                alert(`Отправляю файл ${file.name}, размер ${(file.size / 1024).toFixed(1)} KB`)
+                await sendVoiceMessage(file)
+            } else {
+                alert('Нет данных от VoiceRecorder!')
             }
         } catch (err) {
+            alert('Native stopRecording error: ' + err)
             console.error('Native stopRecording error', err)
         }
     } else if (mediaRecorder) {
+        alert('Останавливаю MediaRecorder (браузер)')
         mediaRecorder.stop()
         mediaRecorder.onstop = async () => {
+            alert('MediaRecorder остановлен, собираю Blob')
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' })
-            await sendVoiceMessage(audioBlob)
+            const file = new File([audioBlob], `voice-${Date.now()}.webm`, { type: 'audio/webm' })
+
+            alert(`Отправляю файл ${file.name}, размер ${(file.size / 1024).toFixed(1)} KB`)
+            await sendVoiceMessage(file)
         }
     }
 }
@@ -139,30 +161,29 @@ async function stopRecording() {
 /**
  * Отправка голосового сообщения на сервер
  */
-async function sendVoiceMessage(blob: Blob) {
+async function sendVoiceMessage(file: File) {
     status.value = 'thinking'
+    alert(`Отправка на сервер: ${file.name}, ${file.type}, ${(file.size/1024).toFixed(1)} KB`)
 
     const formData = new FormData()
-    formData.append('voice', blob)
+    formData.append('voice', file, file.name)
 
     try {
         const res = await axios.post(`/chat/${props.session.id}/voice`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
 
+        alert('Ответ сервера получен!')
+
         const { userMessage, avatarMessage, voiceUrl } = res.data
 
-        // Добавляем в чат текст пользователя
         props.session.messages.push(
             new ChatMessage(userMessage.sender, userMessage.text, new Date(userMessage.timestamp))
         )
-
-        // Добавляем ответ ИИ в чат
         props.session.messages.push(
             new ChatMessage(avatarMessage.sender, avatarMessage.text, new Date(avatarMessage.timestamp))
         )
 
-        // Проигрываем голос ИИ
         if (voiceUrl) {
             status.value = 'speaking'
             if (audioPlayer) {
@@ -177,12 +198,19 @@ async function sendVoiceMessage(blob: Blob) {
         } else {
             status.value = 'waiting'
         }
-    } catch (err) {
-        console.error('Voice message error', err)
+    } catch (err: any) {
+        let msg = 'Ошибка отправки: '
+        if (err.response) {
+            msg += `status ${err.response.status}, data: ${JSON.stringify(err.response.data)}`
+        } else if (err.message) {
+            msg += err.message
+        } else {
+            msg += JSON.stringify(err)
+        }
+        alert(msg)
         status.value = 'waiting'
     }
 }
-
 /**
  * Base64 → Blob
  */
