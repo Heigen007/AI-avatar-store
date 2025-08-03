@@ -140,8 +140,8 @@ function onFileSelected(event: Event) {
     // 🔹 Проверка на 5 МБ
     const maxSizeMB = 5
     if (file.size > maxSizeMB * 1024 * 1024) {
-        alert(`Файл слишком большой. Максимальный размер — ${maxSizeMB} МБ`)
-        ;(event.target as HTMLInputElement).value = '' // сбрасываем выбор
+        alert(`Файл слишком большой. Максимальный размер — ${maxSizeMB} МБ`);
+        (event.target as HTMLInputElement).value = '' // сбрасываем выбор
         return
     }
 
