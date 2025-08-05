@@ -2,7 +2,7 @@
     <div class="min-h-screen px-4 pt-6 pb-20 bg-gradient-to-b from-[#091a2c] via-[#0d2b3f] to-[#134155] text-white flex flex-col">
         <h1 class="text-xl font-semibold text-center text-cyan-100 mb-6">Мой профиль</h1>
 
-        <form class="flex flex-col gap-6 flex-1 overflow-y-auto">
+        <form class="flex flex-col gap-6 flex-1 overflow-y-auto no-wrap">
             <!-- Имя -->
             <div>
                 <label class="block mb-2 text-sm font-medium text-cyan-200">Имя</label>
