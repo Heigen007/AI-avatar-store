@@ -84,8 +84,6 @@ function closeModal() {
  */
 async function startRecording() {
     if (isRecording.value || status.value !== 'waiting') return
-    isRecording.value = true
-    audioChunks = []
 
     const isNative = Capacitor.isNativePlatform()
     if (isNative) {
@@ -93,13 +91,30 @@ async function startRecording() {
             const perm = await VoiceRecorder.hasAudioRecordingPermission()
             if (!perm.value) {
                 await VoiceRecorder.requestAudioRecordingPermission()
+
+                // 💡 Хак: сделать stop/start, чтобы "разбудить" аудиосессию
+                try {
+                    await VoiceRecorder.stopRecording()
+                } catch (e) {
+                    // ignore if not recording
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 300)) // подождать чуть дольше
             }
+
+            isRecording.value = true
+            audioChunks = []
+
             await VoiceRecorder.startRecording()
         } catch (err) {
             console.error('Native audio recording error', err)
             isRecording.value = false
         }
     } else {
+        // Web запись
+        isRecording.value = true
+        audioChunks = []
+
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
         mediaRecorder = new MediaRecorder(stream)
         mediaRecorder.ondataavailable = e => {
@@ -108,6 +123,7 @@ async function startRecording() {
         mediaRecorder.start()
     }
 }
+
 
 /**
  * Остановка записи

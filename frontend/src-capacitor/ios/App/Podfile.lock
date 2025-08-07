@@ -6,6 +6,8 @@ PODS:
   - CapacitorCordova (7.4.2)
   - CapacitorPreferences (7.0.0):
     - Capacitor
+  - CapacitorStatusBar (7.0.2):
+    - Capacitor
   - CapacitorVoiceRecorder (7.0.6):
     - Capacitor
 
@@ -14,6 +16,7 @@ DEPENDENCIES:
   - "CapacitorApp (from `../../node_modules/@capacitor/app`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
+  - "CapacitorStatusBar (from `../../node_modules/@capacitor/status-bar`)"
   - CapacitorVoiceRecorder (from `../../node_modules/capacitor-voice-recorder`)
 
 EXTERNAL SOURCES:
@@ -25,6 +28,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorPreferences:
     :path: "../../node_modules/@capacitor/preferences"
+  CapacitorStatusBar:
+    :path: "../../node_modules/@capacitor/status-bar"
   CapacitorVoiceRecorder:
     :path: "../../node_modules/capacitor-voice-recorder"
 
@@ -33,8 +38,9 @@ SPEC CHECKSUMS:
   CapacitorApp: 9cb31064a6c6bb2b1438583733a7bf45557fc1da
   CapacitorCordova: 5e58d04631bc5094894ac106e2bf1da18a9e6151
   CapacitorPreferences: 8e4bef1f937fc991a19d7ea99330c36a62edd24b
+  CapacitorStatusBar: e04d05e121d5a5979c29eb4249186a4e4a84cacb
   CapacitorVoiceRecorder: 9158861be982f32d411769723a4d813d6ce46135
 
-PODFILE CHECKSUM: d51b395f01ee89d3f9206f1c430e054fe979fbfe
+PODFILE CHECKSUM: 0c5aface9475f804fd5947a9ab98ad3c006e263b
 
 COCOAPODS: 1.16.2

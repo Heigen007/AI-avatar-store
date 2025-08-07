@@ -28,3 +28,7 @@
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 232, 240, 0.1);
 }
+
+body {
+    background-color: #091a2c;
+}
