@@ -50,6 +50,14 @@
     <string>Приложению нужен доступ к микрофону для записи голоса</string>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>Приложению нужен доступ к фото, чтобы выбирать и отправлять изображения</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Необходим доступ к камере для отправки фотографий в чат</string>
+
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Необходим доступ к фотогалерее для выбора изображений</string>
+
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Необходим доступ к фотогалерее</string>
 
 </dict>
 </plist>

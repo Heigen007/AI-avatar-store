@@ -65,6 +65,7 @@ import { UserProfile } from 'src/models/UserProfile'
 import { MessageSender } from 'src/utils/MessageSender'
 import VoiceCallModal from 'src/components/VoiceCallModal.vue'
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
+import { StatusBar, Style } from '@capacitor/status-bar'
 
 const router = useRouter()
 const route = useRoute()
@@ -86,9 +87,13 @@ async function takePhoto() {
     try {
         const photo = await Camera.getPhoto({
             resultType: CameraResultType.Uri,
-            source: CameraSource.Camera,
+            source: CameraSource.Prompt,
             quality: 90
         })
+
+        await StatusBar.setOverlaysWebView({ overlay: false })
+        await StatusBar.setBackgroundColor({ color: '#091a2c' })
+        await StatusBar.setStyle({ style: Style.Light })
 
         if (photo?.webPath) {
             imagePreviewUrl.value = photo.webPath
