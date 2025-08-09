@@ -85,7 +85,7 @@ export const Footer = () => {
                     {/* Copyright */}
                     <div className="mt-12 pt-8 border-t border-glass-border text-center">
                         <p className="text-muted-foreground">
-                            © 2024 Repliky. Все права защищены. Создано с ❤️ для лучшего будущего.
+                            © 2025 Repliky. Все права защищены. Создано с ❤️ для лучшего будущего.
                         </p>
                     </div>
                 </GlassCard>

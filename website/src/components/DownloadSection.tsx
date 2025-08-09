@@ -37,23 +37,33 @@ export const DownloadSection = () => {
 
             {/* Download Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center animate-slide-up delay-200">
-              <Button 
-                size="lg" 
-                className="group relative overflow-hidden bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-primary-foreground font-semibold py-6 px-12 rounded-3xl transition-all duration-300 hover:scale-105 shadow-glow text-lg"
-              >
-                <Download className="w-6 h-6 mr-3" />
-                App Store
-                <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </Button>
-              
-              <Button 
-                size="lg"
-                className="group relative overflow-hidden bg-gradient-to-r from-secondary to-muted hover:from-muted hover:to-secondary text-secondary-foreground font-semibold py-6 px-12 rounded-3xl transition-all duration-300 hover:scale-105 shadow-card text-lg border border-primary/30"
-              >
-                <Smartphone className="w-6 h-6 mr-3" />
-                Google Play
-                <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </Button>
+                <a
+                    href="https://apps.apple.com/us/app/repliky/id6749673988"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <Button 
+                        size="lg" 
+                        className="group relative overflow-hidden bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-primary-foreground font-semibold py-6 px-12 rounded-3xl transition-all duration-300 hover:scale-105 shadow-glow text-lg"
+                    >
+                        <Download className="w-6 h-6 mr-3" />
+                        App Store
+                        <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </Button>
+                </a>
+                
+                <a
+                    href="#"
+                >
+                    <Button 
+                        size="lg"
+                        className="group relative overflow-hidden bg-gradient-to-r from-secondary to-muted hover:from-muted hover:to-secondary text-secondary-foreground font-semibold py-6 px-12 rounded-3xl transition-all duration-300 hover:scale-105 shadow-card text-lg border border-primary/30"
+                    >
+                        <Smartphone className="w-6 h-6 mr-3" />
+                        Google Play
+                        <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    </Button>
+                </a>
             </div>
 
             {/* Features highlight */}

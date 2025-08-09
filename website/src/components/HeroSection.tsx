@@ -31,24 +31,34 @@ export const HeroSection = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-              <Button 
-                size="lg" 
-                className="group relative overflow-hidden bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-primary-foreground font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105 shadow-glow"
+              <a
+                  href="https://apps.apple.com/us/app/repliky/id6749673988"
+                  target="_blank"
+                  rel="noopener noreferrer"
               >
-                <Download className="w-5 h-5 mr-2" />
-                Скачать в App Store
-                <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </Button>
-              
-              <Button 
-                variant="outline" 
-                size="lg"
-                className="group relative overflow-hidden border-primary/50 text-primary hover:bg-primary/10 font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                  <Button
+                      size="lg"
+                      className="group relative overflow-hidden bg-gradient-to-r from-primary to-accent hover:from-accent hover:to-primary text-primary-foreground font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105 shadow-glow"
+                  >
+                      <Download className="w-5 h-5 mr-2" />
+                      Скачать в App Store
+                      <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </Button>
+              </a>
+
+              <a
+                  href="#"
               >
-                <Smartphone className="w-5 h-5 mr-2" />
-                Скачать в Google Play
-                <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              </Button>
+                  <Button
+                      variant="outline"
+                      size="lg"
+                      className="group relative overflow-hidden border-primary/50 text-primary hover:bg-primary/10 font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105 backdrop-blur-sm"
+                  >
+                      <Smartphone className="w-5 h-5 mr-2" />
+                      Скачать в Google Play
+                      <div className="absolute inset-0 bg-gradient-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </Button>
+              </a>
             </div>
           </div>
 
