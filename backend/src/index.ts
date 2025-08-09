@@ -19,7 +19,7 @@ async function init(): Promise<void> {
     });
 
     app.get('/api/version-check', (req, res) => {
-        res.json({ version: '1.0.0', status: 'ok' });
+        res.json({ version: '1.1.0', status: 'ok' });
     });
 
     app.use('/api', globalRouter);
