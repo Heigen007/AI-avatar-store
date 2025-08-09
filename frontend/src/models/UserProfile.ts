@@ -9,7 +9,7 @@ import { Capacitor } from '@capacitor/core'
 export class UserProfile {
     static currentUser: UserProfile | null = null
     static currentUserId: number | null = null
-    static appVersion: string = '1.0.0'
+    static appVersion: string = '1.1.0'
     static requiredVersion: string = ''
     static ready: Ref<boolean> = ref(false)
 
