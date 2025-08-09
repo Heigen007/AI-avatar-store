@@ -76,6 +76,39 @@
                 </div>
             </div>
 
+            <!-- Фотография -->
+            <div>
+                <label class="block mb-2 text-sm font-medium text-cyan-200">Выбери фото</label>
+                <div ref="containerRef" class="keen-slider" style="max-width: 92vw">
+                    <div
+                        v-for="(src, index) in photoList"
+                        :key="index"
+                        class="keen-slider__slide flex items-center justify-center cursor-pointer"
+                        @click="selectSlide(index)"
+                    >
+                        <img
+                            :src="`/${src}`"
+                            :alt="`avatar ${index}`"
+                            class="rounded-2xl h-40 w-28 object-cover transition-transform duration-300"
+                            :class="{
+                                'scale-110 border-4 border-cyan-400': selectedIndex === index,
+                                'opacity-60': selectedIndex !== index
+                            }"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Описание -->
+            <div>
+                <label class="block mb-2 text-sm font-medium text-cyan-200">Описание (необязательно)</label>
+                <textarea
+                    v-model="form.description"
+                    rows="4"
+                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white placeholder-cyan-300 resize-none"
+                ></textarea>
+            </div>
+
             <!-- Голос -->
             <div>
                 <label class="block mb-2 text-sm font-medium text-cyan-200">Голос аватара</label>
@@ -101,39 +134,6 @@
                 </div>
             </div>
 
-            <!-- Описание -->
-            <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Описание (необязательно)</label>
-                <textarea
-                    v-model="form.description"
-                    rows="4"
-                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white placeholder-cyan-300 resize-none"
-                ></textarea>
-            </div>
-
-            <!-- Фотография -->
-            <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Выбери фото</label>
-                <div ref="containerRef" class="keen-slider" style="max-width: 92vw">
-                    <div
-                        v-for="(src, index) in photoList"
-                        :key="index"
-                        class="keen-slider__slide flex items-center justify-center cursor-pointer"
-                        @click="selectSlide(index)"
-                    >
-                        <img
-                            :src="`/${src}`"
-                            :alt="`avatar ${index}`"
-                            class="rounded-2xl h-40 w-28 object-cover transition-transform duration-300"
-                            :class="{
-                                'scale-110 border-4 border-cyan-400': selectedIndex === index,
-                                'opacity-60': selectedIndex !== index
-                            }"
-                        />
-                    </div>
-                </div>
-            </div>
-
             <!-- Кнопка Обновить -->
             <div class="mt-8">
                 <button
@@ -149,106 +149,161 @@
 </template>
 
 <script setup lang="ts">
-import 'keen-slider/keen-slider.min.css'
-import { useKeenSlider } from 'keen-slider/vue'
-import { Avatar } from 'src/models/Avatar'
-import { ref, computed, reactive } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { UserProfile } from 'src/models/UserProfile'
+    import 'keen-slider/keen-slider.min.css'
+    import { useKeenSlider } from 'keen-slider/vue'
+    import { Avatar } from 'src/models/Avatar'
+    import { ref, computed, reactive, onBeforeUnmount } from 'vue'
+    import { useRouter, useRoute } from 'vue-router'
+    import { UserProfile } from 'src/models/UserProfile'
 
-const router = useRouter()
-const route = useRoute()
-const avatarId = route.params.avatarId as string
-const currentAvatar = UserProfile.currentUser!.getAvatarById(avatarId)!
-const sessionRaw = UserProfile.currentUser?.getSessionByAvatarId(avatarId)
-const session = reactive(sessionRaw!)
+    const router = useRouter()
+    const route = useRoute()
+    const avatarId = route.params.avatarId as string
+    const currentAvatar = UserProfile.currentUser!.getAvatarById(avatarId)!
+    const sessionRaw = UserProfile.currentUser?.getSessionByAvatarId(avatarId)
+    const session = reactive(sessionRaw!)
 
-const photoList = Array.from({ length: 12 }, (_, i) => `${i + 1}.jpg`)
-const selectedIndex = ref(0)
+    const photoList = Array.from({ length: 12 }, (_, i) => `${i + 1}.jpg`)
+    const selectedIndex = ref(0)
 
-const voiceOptions = [
-    { label: '1', value: 'alloy', src: '/voices/1.mp3' },
-    { label: '2', value: 'ash', src: '/voices/2.mp3' },
-    { label: '3', value: 'ballad', src: '/voices/3.mp3' },
-    { label: '4', value: 'coral', src: '/voices/4.mp3' },
-    { label: '5', value: 'echo', src: '/voices/5.mp3' },
-    { label: '6', value: 'fable', src: '/voices/6.mp3' },
-    { label: '7', value: 'nova', src: '/voices/7.mp3' },
-    { label: '8', value: 'onyx', src: '/voices/8.mp3' },
-    { label: '9', value: 'sage', src: '/voices/9.mp3' },
-    { label: '10', value: 'shimmer', src: '/voices/10.mp3' }
-]
+    // ---- ЕДИНЫЙ ПЛЕЕР ДЛЯ ПРОСЛУШИВАНИЯ ГОЛОСОВ ----
+    const audio = ref<HTMLAudioElement | null>(null)
+    const currentVoiceSrc = ref<string | null>(null)
+    const isAnyVoicePlaying = ref(false)
 
-const form = ref({
-    name: currentAvatar?.name || '',
-    role: currentAvatar?.role || 'friend',
-    gender: currentAvatar?.gender || 'male',
-    personality: currentAvatar?.personality || '',
-    description: currentAvatar?.description || '',
-    photoUrl: currentAvatar?.photoUrl || photoList[0],
-    voice: currentAvatar?.voice || 'alloy'
-}) as any;
-
-const [containerRef, slider] = useKeenSlider({
-    loop: true,
-    slides: { perView: 3, spacing: 15, origin: 'center' },
-    created() {
-        selectedIndex.value = photoList.indexOf(form.value.photoUrl)
-    },
-    slideChanged(s) {
-        selectedIndex.value = s.track.details.rel
-        form.value.photoUrl = photoList[selectedIndex.value]
+    function stopCurrentAudio() {
+        if (audio.value) {
+            try {
+                audio.value.pause()
+                audio.value.currentTime = 0
+            } catch {}
+        }
+        isAnyVoicePlaying.value = false
+        currentVoiceSrc.value = null
     }
-})
 
-function selectSlide(index: number) {
-    if (slider.value) {
-        slider.value.moveToIdx(index)
+    async function playVoice(src: string) {
+        // повторный клик по тому же — пауза/стоп
+        if (audio.value && currentVoiceSrc.value === src && !audio.value.paused) {
+            stopCurrentAudio()
+            return
+        }
+
+        // остановить предыдущий
+        stopCurrentAudio()
+
+        audio.value = new Audio(src)
+        currentVoiceSrc.value = src
+        audio.value.onended = () => stopCurrentAudio()
+        audio.value.onerror = () => stopCurrentAudio()
+
+        try {
+            await audio.value.play()
+            isAnyVoicePlaying.value = true
+        } catch {
+            stopCurrentAudio()
+        }
     }
-}
 
-function playVoice(src: string) {
-    const audio = new Audio(src)
-    audio.play()
-}
+    const onVisibilityChange = () => {
+        if (document.hidden) stopCurrentAudio()
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
 
-const relationshipOptions = [
-    { label: 'Друг', value: 'friend' },
-    { label: 'Любовь', value: 'lover' },
-    { label: 'Ментор', value: 'mentor' }
-]
+    onBeforeUnmount(() => {
+        document.removeEventListener('visibilitychange', onVisibilityChange)
+        stopCurrentAudio()
+    })
+    // ---- /АУДИО ----
 
-const genderOptions = [
-    { label: 'Мужской', value: 'male' },
-    { label: 'Женский', value: 'female' }
-]
+    const [containerRef, slider] = useKeenSlider({
+        loop: true,
+        slides: { perView: 3, spacing: 15, origin: 'center' },
+        created(s) {
+            // стартовый индекс — по текущей фотке аватара
+            const idx = photoList.indexOf(form.value.photoUrl)
+            selectedIndex.value = idx >= 0 ? idx : s.track.details.rel
+            // синхронизировать видимый слайд с выбранным индексом
+            if (slider.value && selectedIndex.value !== s.track.details.rel) {
+                slider.value.moveToIdx(selectedIndex.value)
+            }
+        },
+        slideChanged(s) {
+            selectedIndex.value = s.track.details.rel
+            form.value.photoUrl = photoList[selectedIndex.value]
+        }
+    })
 
-const personalityOptions = [
-    { label: 'Спокойный и заботливый', value: 'gentle' },
-    { label: 'Весёлый и энергичный', value: 'funny' },
-    { label: 'Строгий и прямолинейный', value: 'strict' },
-    { label: 'Мудрый и философский', value: 'wise' },
-    { label: 'Флиртующий и романтичный', value: 'romantic' },
-    { label: 'Аналитичный и логичный', value: 'logical' }
-]
+    function selectSlide(index: number) {
+        if (slider.value) {
+            slider.value.moveToIdx(index)
+        }
+    }
 
-const isValid = computed(() =>
-    form.value.name.trim() !== '' &&
-    form.value.personality !== '' &&
-    form.value.voice !== ''
-)
+    const relationshipOptions = [
+        { label: 'Друг', value: 'friend' },
+        { label: 'Любовь', value: 'lover' },
+        { label: 'Ментор', value: 'mentor' }
+    ]
 
-async function updateAvatar() {
-    await Avatar.updateAvatar(
-        currentAvatar,
-        form.value.name,
-        form.value.role,
-        form.value.gender,
-        form.value.personality,
-        form.value.photoUrl,
-        form.value.description,
-        form.value.voice
+    const genderOptions = [
+        { label: 'Мужской', value: 'male' },
+        { label: 'Женский', value: 'female' }
+    ]
+
+    const personalityOptions = [
+        { label: 'Спокойный и заботливый', value: 'gentle' },
+        { label: 'Весёлый и энергичный', value: 'funny' },
+        { label: 'Строгий и прямолинейный', value: 'strict' },
+        { label: 'Мудрый и философский', value: 'wise' },
+        { label: 'Флиртующий и романтичный', value: 'romantic' },
+        { label: 'Аналитичный и логичный', value: 'logical' }
+    ]
+
+    const voiceOptions = [
+        { label: '1', value: 'alloy', src: '/voices/1.mp3' },
+        { label: '2', value: 'ash', src: '/voices/2.mp3' },
+        { label: '3', value: 'ballad', src: '/voices/3.mp3' },
+        { label: '4', value: 'coral', src: '/voices/4.mp3' },
+        { label: '5', value: 'echo', src: '/voices/5.mp3' },
+        { label: '6', value: 'fable', src: '/voices/6.mp3' },
+        { label: '7', value: 'nova', src: '/voices/7.mp3' },
+        { label: '8', value: 'onyx', src: '/voices/8.mp3' },
+        { label: '9', value: 'sage', src: '/voices/9.mp3' },
+        { label: '10', value: 'shimmer', src: '/voices/10.mp3' }
+    ]
+
+    const form = ref({
+        name: currentAvatar?.name || '',
+        role: currentAvatar?.role || 'friend',
+        gender: currentAvatar?.gender || 'male',
+        personality: currentAvatar?.personality || '',
+        description: currentAvatar?.description || '',
+        photoUrl: currentAvatar?.photoUrl || photoList[0],
+        voice: currentAvatar?.voice || 'alloy'
+    }) as any
+
+    const isValid = computed(() =>
+        form.value.name.trim() !== '' &&
+        form.value.personality !== '' &&
+        form.value.voice !== ''
     )
-    router.push({ name: 'ChatPage', params: { sessionId: session.id } })
-}
+
+    async function updateAvatar() {
+        await Avatar.updateAvatar(
+            currentAvatar,
+            form.value.name,
+            form.value.role,
+            form.value.gender,
+            form.value.personality,
+            form.value.photoUrl,
+            form.value.description,
+            form.value.voice
+        )
+
+        // останавливаем звук перед переходом
+        stopCurrentAudio()
+
+        router.push({ name: 'ChatPage', params: { sessionId: session.id } })
+    }
 </script>

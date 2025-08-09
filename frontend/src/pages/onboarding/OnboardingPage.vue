@@ -17,11 +17,23 @@
                 Назад
             </button>
             <button
-                class="text-cyan-300 font-medium disabled:opacity-30 transition"
-                :disabled="!canProceed"
+                class="text-cyan-300 font-medium disabled:opacity-30 transition flex items-center gap-2"
+                :disabled="!canProceed || savingState === 'saving'"
                 @click="handleNext"
             >
-                {{ stepIndex < steps.length - 1 ? 'Далее' : 'Готово' }}
+                <template v-if="savingState === 'idle'">
+                    {{ stepIndex < steps.length - 1 ? 'Далее' : 'Готово' }}
+                </template>
+                <template v-else-if="savingState === 'saving'">
+                    <span class="w-4 h-4 rounded-full border-2 border-cyan-300 border-t-transparent animate-spin"></span>
+                    Сохраняю…
+                </template>
+                <template v-else-if="savingState === 'success'">
+                    <svg viewBox="0 0 24 24" class="w-5 h-5 stroke-emerald-400 fill-none" stroke-width="2">
+                        <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                    Сохранено
+                </template>
             </button>
         </div>
         </div>
@@ -42,6 +54,7 @@ import { UserProfile } from 'src/models/UserProfile'
 const router = useRouter()
 const draft = ref(new UserProfileDraft())
 const stepIndex = ref(0)
+const savingState = ref<'idle' | 'saving' | 'success'>('idle')
 
 const steps = [StepName, StepAge, StepBio]
 const currentComponent = computed(() => steps[stepIndex.value])
@@ -49,12 +62,23 @@ const currentComponent = computed(() => steps[stepIndex.value])
 function nextStep() {
     if (stepIndex.value < steps.length - 1) stepIndex.value++
 }
-function handleNext() {
+async function handleNext() {
     if (stepIndex.value < steps.length - 1) {
         nextStep()
     } else {
-        onComplete()
+        await onComplete()
     }
+}
+
+async function onComplete() {
+    savingState.value = 'saving'
+    await UserProfile.setCurrentUser(
+        draft.value.name,
+        draft.value.age || 25,
+        draft.value.bio.trim()
+    )
+
+    router.push({ name: 'HomePage' })
 }
 
 function prevStep() {
@@ -66,11 +90,6 @@ const canProceed = computed(() => {
     if (stepIndex.value === 1) return !!draft.value.age
     return true
 })
-
-async function onComplete() {
-    await UserProfile.setCurrentUser(draft.value.name, draft.value.age || 25, draft.value.bio.trim())
-    router.push({ name: 'HomePage' })
-}
 </script>
 
 <style scoped>
