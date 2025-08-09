@@ -1,25 +1,25 @@
 <template>
-    <div class="min-h-screen px-4 pt-6 pb-20 bg-gradient-to-b from-[#091a2c] via-[#0d2b3f] to-[#134155] text-white flex flex-col">
-        <h1 class="text-xl font-semibold text-center text-cyan-100 mb-2">Создай своего ИИ-аватара</h1>
-        <p class="text-center text-cyan-300 text-sm mb-4">
+    <div class="min-h-screen px-4 pt-6 pb-20 bg-gradient-to-b from-indigo-950 via-slate-900 to-indigo-950 text-white flex flex-col">
+        <h1 class="text-xl font-semibold text-center text-violet-100 mb-2">Создай своего ИИ-аватара</h1>
+        <p class="text-center text-violet-300 text-sm mb-4">
             Заполните информацию об аватаре, чтобы сделать его уникальным
         </p>
 
         <form class="flex flex-col gap-6 flex-1 overflow-y-auto no-wrap" @submit.prevent="submit">
             <!-- Имя -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Имя аватара</label>
+                <label class="block mb-2 text-sm font-medium text-violet-200">Имя аватара</label>
                 <input
                     v-model="form.name"
                     type="text"
                     placeholder="Алекс, София..."
-                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white placeholder-cyan-300"
+                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 text-white placeholder-violet-300"
                 />
             </div>
 
             <!-- Пол -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Пол аватара</label>
+                <label class="block mb-2 text-sm font-medium text-violet-200">Пол аватара</label>
                 <div class="flex gap-3">
                     <button
                         v-for="option in genderOptions"
@@ -28,8 +28,8 @@
                         :class="[
                             'flex-1 px-4 py-2 rounded-xl border text-sm font-medium',
                             form.gender === option.value
-                                ? 'bg-cyan-500 text-white border-cyan-500'
-                                : 'bg-white/5 text-cyan-300 border-white/20 hover:bg-white/10'
+                                ? 'bg-violet-500 text-white border-violet-500'
+                                : 'bg-white/5 text-violet-300 border-white/20 hover:bg-white/10'
                         ]"
                         @click="form.gender = option.value"
                     >
@@ -40,7 +40,7 @@
 
             <!-- Тип отношений -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Тип отношений</label>
+                <label class="block mb-2 text-sm font-medium text-violet-200">Тип отношений</label>
                 <div class="flex gap-3">
                     <button
                         v-for="option in relationshipOptions"
@@ -49,8 +49,8 @@
                         :class="[
                             'flex-1 px-4 py-2 rounded-xl border text-sm font-medium',
                             form.role === option.value
-                                ? 'bg-cyan-500 text-white border-cyan-500'
-                                : 'bg-white/5 text-cyan-300 border-white/20 hover:bg-white/10'
+                                ? 'bg-violet-500 text-white border-violet-500'
+                                : 'bg-white/5 text-violet-300 border-white/20 hover:bg-white/10'
                         ]"
                         @click="form.role = option.value"
                     >
@@ -61,7 +61,7 @@
 
             <!-- Характер -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Характер</label>
+                <label class="block mb-2 text-sm font-medium text-violet-200">Характер</label>
                 <div class="flex flex-wrap gap-2">
                     <button
                         v-for="option in personalityOptions"
@@ -70,8 +70,8 @@
                         :class="[
                             'px-3 py-2 rounded-xl border text-sm font-medium whitespace-nowrap',
                             form.personality === option.value
-                                ? 'bg-cyan-500 text-white border-cyan-500'
-                                : 'bg-white/5 text-cyan-300 border-white/20 hover:bg-white/10'
+                                ? 'bg-violet-500 text-white border-violet-500'
+                                : 'bg-white/5 text-violet-300 border-white/20 hover:bg-white/10'
                         ]"
                         @click="form.personality = option.value"
                     >
@@ -82,7 +82,7 @@
 
             <!-- Фотография -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Выбери фото</label>
+                <label class="block mb-2 text-sm font-medium text-violet-200">Выбери фото</label>
                 <div ref="containerRef" class="keen-slider" style="max-width: 92vw">
                     <div
                         v-for="(src, index) in photoList"
@@ -95,7 +95,7 @@
                             :alt="`avatar ${index}`"
                             class="rounded-2xl h-40 w-28 object-cover transition-transform duration-300"
                             :class="{
-                                'scale-110 border-4 border-cyan-400': selectedIndex === index,
+                                'scale-110 border-4 border-violet-400': selectedIndex === index,
                                 'opacity-60': selectedIndex !== index
                             }"
                         />
@@ -105,9 +105,9 @@
 
             <!-- Описание -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">
+                <label class="block mb-2 text-sm font-medium text-violet-200">
                     Расскажите об аватаре
-                    <span class="ml-2 text-xs font-normal px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300">
+                    <span class="ml-2 text-xs font-normal px-2 py-0.5 rounded-full bg-violet-500/20 text-violet-300">
                         необязательно
                     </span>
                 </label>
@@ -115,27 +115,27 @@
                     v-model="form.description"
                     rows="4"
                     placeholder="Здесь можно описать характер, прошлое, интересы, работу, стиль общения и другие детали. Это поможет ИИ вести себя реалистичнее."
-                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white placeholder-cyan-300 resize-none"
+                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 text-white placeholder-violet-300 resize-none"
                 ></textarea>
             </div>
 
             <!-- Голос -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Голос аватара</label>
+                <label class="block mb-2 text-sm font-medium text-violet-200">Голос аватара</label>
                 <div class="flex flex-wrap gap-3">
                     <div
                         v-for="voice in voiceOptions"
                         :key="voice.value"
                         class="flex items-center gap-2 px-3 py-2 rounded-xl border cursor-pointer"
                         :class="form.voice === voice.value
-                            ? 'bg-cyan-500 text-white border-cyan-500'
-                            : 'bg-white/5 text-cyan-300 border-white/20 hover:bg-white/10'"
+                            ? 'bg-violet-500 text-white border-violet-500'
+                            : 'bg-white/5 text-violet-300 border-white/20 hover:bg-white/10'"
                         @click="form.voice = voice.value"
                     >
                         {{ voice.label }}
                         <button
                             type="button"
-                            class="ml-2 text-xs px-2 py-1 rounded bg-cyan-600 hover:bg-cyan-500"
+                            class="ml-2 text-xs px-2 py-1 rounded bg-violet-600 hover:bg-violet-500"
                             @click.stop="playVoice(voice.src)"
                         >
                             ▶
@@ -147,10 +147,10 @@
             <!-- Кнопка продолжить -->
             <div class="mt-8">
                 <button
-                    class="w-full py-3 rounded-xl bg-cyan-500 hover:bg-cyan-600 text-white font-semibold text-base transition"
-                    :disabled="!isValid"
-                    type="submit"
-                >
+                    class="w-full py-3 rounded-xl bg-violet-500 hover:bg-violet-600 text-white font-semibold text-base transition"
+                :disabled="!isValid"
+                type="submit"
+            >
                     Продолжить
                 </button>
             </div>

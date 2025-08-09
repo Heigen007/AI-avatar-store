@@ -1,11 +1,17 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-page-container class="relative overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
+    <q-page-container
+      class="relative overflow-hidden bg-gradient-to-b from-indigo-950 via-slate-900 to-indigo-950"
+      style="padding-bottom: 0; height: 100vh"
+    >
       <router-view v-slot="{ Component, route }">
         <transition :name="transitionName">
-          <div v-if="isUnderMaintenance" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-center text-white px-6">
+          <div
+            v-if="isUnderMaintenance"
+            class="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-center text-white px-6"
+          >
             <div class="text-2xl font-semibold mb-4">Приложение на техническом обслуживании</div>
-            <div class="text-cyan-300">Пожалуйста, повторите попытку входа через 15 минут.</div>
+            <div class="text-violet-300">Пожалуйста, повторите попытку входа через 15 минут.</div>
           </div>
           <component
             v-else
@@ -17,13 +23,13 @@
       </router-view>
     </q-page-container>
 
-    <q-footer class="bg-white/5 backdrop-blur-xl border-t border-white/10 text-cyan-100">
+    <q-footer class="bg-white/10 backdrop-blur-xl border-t border-white/20 text-indigo-100">
       <q-tabs
         dense
         align="justify"
-        class="text-cyan-300"
-        active-color="cyan-400"
-        indicator-color="cyan-400"
+        class="text-violet-300"
+        active-color="violet-400"
+        indicator-color="violet-400"
       >
         <q-route-tab content-class="q-mb-sm" label="Профиль" icon="person" to="/profile" />
         <q-route-tab content-class="q-mb-sm" label="Аватары" icon="people" to="/home" />

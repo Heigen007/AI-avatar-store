@@ -10,25 +10,25 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(0, 232, 240, 0.2); /* #00E8F0 */
+    background: rgba(139, 92, 246, 0.25); /* violet-500 */
     border-radius: 8px;
     transition: background 0.3s ease;
     backdrop-filter: blur(4px);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 232, 240, 0.4);
+    background: rgba(139, 92, 246, 0.45);
 }
 
 .glass-dialog {
-    background: rgba(10, 25, 47, 0.6); /* глубокий синий */
+    background: rgba(24, 24, 38, 0.55);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #e0f7fa;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #e0e7ff;
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 232, 240, 0.1);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
 }
 
 body {
-    background-color: #091a2c;
+    background: linear-gradient(135deg, #1e1e2e 0%, #3b1d60 50%, #212c4f 100%);
 }
