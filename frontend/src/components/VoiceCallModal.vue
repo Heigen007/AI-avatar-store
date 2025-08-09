@@ -1,9 +1,9 @@
 <template>
-    <div class="fixed inset-0 bg-black/70 backdrop-blur-md flex flex-col items-center justify-center z-50">
+    <div class="fixed inset-0 bg-white/80 backdrop-blur-md flex flex-col items-center justify-center z-50">
         <!-- Кнопка закрытия -->
         <button
             @click="closeModal"
-            class="absolute top-4 right-4 text-white/70 hover:text-white text-3xl font-bold"
+            class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-3xl font-bold"
         >
             ×
         </button>
@@ -12,17 +12,17 @@
         <div class="relative w-40 h-40 mb-8 flex items-center justify-center">
             <div
                 v-if="status === 'speaking'"
-                class="absolute inset-1 rounded-full border-4 border-cyan-400 animate-ping"
+                class="absolute inset-1 rounded-full border-4 border-violet-400 animate-ping"
             ></div>
 
             <img
                 :src="session.avatar.photoUrl"
-                class="w-40 h-40 rounded-full object-cover shadow-xl border-4 border-cyan-400"
+                class="w-40 h-40 rounded-full object-cover shadow-xl border-4 border-violet-400"
             />
         </div>
 
         <!-- Статус -->
-        <div class="text-xl text-cyan-200 mb-8 h-8 transition">
+        <div class="text-xl text-violet-600 mb-8 h-8 transition">
             <span v-if="status === 'waiting'">Жду вашего сообщения…</span>
             <span v-else-if="status === 'thinking'">Думаю над ответом…</span>
             <span v-else-if="status === 'speaking'">Говорю…</span>
@@ -38,7 +38,7 @@
                 @touchend.prevent="stopRecording"
                 :disabled="isRecording || status !== 'waiting'"
                 class="w-20 h-20 rounded-full flex items-center justify-center transition
-                       bg-cyan-500 hover:bg-cyan-400 text-white shadow-xl relative"
+                       bg-violet-500 hover:bg-violet-600 text-white shadow-xl relative"
             >
                 <span
                     class="absolute w-6 h-6 bg-red-500 rounded-full animate-pulse"
@@ -47,7 +47,7 @@
                 <q-icon name="mic" size="36px" />
             </button>
 
-            <div class="text-sm text-cyan-300 max-w-[200px] text-center">
+            <div class="text-sm text-violet-500 max-w-[200px] text-center">
                 Удерживайте, чтобы записать голосовое
             </div>
         </div>

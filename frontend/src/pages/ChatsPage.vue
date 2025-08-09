@@ -1,11 +1,11 @@
 <template>
-    <div class="min-h-screen px-4 py-6 bg-gradient-to-b from-[#0a192f] via-[#0e2a40] to-[#12384d] text-white">
-        <h1 class="text-xl font-semibold text-center text-cyan-100 mb-6">Мои чаты</h1>
+    <div class="min-h-screen px-4 py-6 bg-gradient-to-b from-white via-violet-50 to-white text-gray-800">
+        <h1 class="text-xl font-semibold text-center text-violet-700 mb-6">Мои чаты</h1>
 
-        <div v-if="sessions.length === 0" class="text-center text-cyan-300 mt-20">
+        <div v-if="sessions.length === 0" class="text-center text-violet-500 mt-20">
             <div class="text-4xl mb-2">💬</div>
             <div class="text-base">У тебя пока нет чатов с аватарами</div>
-            <div class="text-sm text-cyan-500 mt-1">Создай аватара, чтобы начать общение</div>
+            <div class="text-sm text-violet-400 mt-1">Создай аватара, чтобы начать общение</div>
         </div>
 
         <div v-else class="flex flex-col gap-3">

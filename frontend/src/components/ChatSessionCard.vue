@@ -1,19 +1,19 @@
 <template>
     <div
-        class="flex items-center justify-between gap-4 p-3 bg-white/10 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-lg hover:bg-white/15 transition"
+        class="flex items-center justify-between gap-4 p-3 bg-white border border-violet-200 rounded-2xl shadow-lg hover:bg-violet-50 transition"
         @click="$emit('open')"
     >
         <div class="flex items-center gap-4 cursor-pointer">
             <img
                 :src="session.avatar.photoUrl"
-                class="w-12 h-12 rounded-full object-cover shadow-md ring-2 ring-cyan-400"
+                class="w-12 h-12 rounded-full object-cover shadow-md ring-2 ring-violet-400"
             />
 
             <div class="flex flex-col">
-                <div class="text-base font-semibold text-cyan-100">
+                <div class="text-base font-semibold text-gray-800">
                     {{ session.avatar.name }}
                 </div>
-                <div class="text-sm text-cyan-300 opacity-80 truncate max-w-[200px]">
+                <div class="text-sm text-gray-500 truncate max-w-[200px]">
                     {{ lastMessage }}
                 </div>
             </div>
@@ -21,7 +21,7 @@
 
         <button
             @click.stop="confirmDelete"
-            class="text-cyan-300 hover:text-red-400 transition text-xl"
+            class="text-violet-500 hover:text-red-500 transition text-xl"
         >
             ✕
         </button>
@@ -52,9 +52,9 @@ function confirmDelete() {
         },
         cancel: {
             label: 'Отмена',
-            color: 'cyan-5',
+            color: 'purple-5',
             flat: true,
-            class: 'px-4 py-2 rounded-lg text-sm text-cyan-300'
+            class: 'px-4 py-2 rounded-lg text-sm text-violet-500'
         }
     }).onOk(async () => {
         await Avatar.deleteAvatarById(props.session.avatar.id)

@@ -10,25 +10,25 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(139, 92, 246, 0.25); /* violet-500 */
+    background: rgba(139, 92, 246, 0.35);
     border-radius: 8px;
     transition: background 0.3s ease;
     backdrop-filter: blur(4px);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(139, 92, 246, 0.45);
+    background: rgba(139, 92, 246, 0.55);
 }
 
 .glass-dialog {
-    background: rgba(24, 24, 38, 0.55);
+    background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    color: #e0e7ff;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    color: #1f2937;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(139, 92, 246, 0.15);
 }
 
 body {
-    background: linear-gradient(135deg, #1e1e2e 0%, #3b1d60 50%, #212c4f 100%);
+    background: linear-gradient(135deg, #fdfbff 0%, #e0e7ff 50%, #fdfbff 100%);
 }

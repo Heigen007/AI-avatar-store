@@ -1,42 +1,42 @@
 <template>
-    <div class="min-h-screen px-4 pt-6 pb-20 bg-gradient-to-b from-[#091a2c] via-[#0d2b3f] to-[#134155] text-white flex flex-col">
-        <h1 class="text-xl font-semibold text-center text-cyan-100 mb-6">Мой профиль</h1>
+    <div class="min-h-screen px-4 pt-6 pb-20 bg-gradient-to-b from-white via-violet-50 to-white text-gray-800 flex flex-col">
+        <h1 class="text-xl font-semibold text-center text-violet-700 mb-6">Мой профиль</h1>
 
         <form class="flex flex-col gap-6 flex-1 overflow-y-auto no-wrap">
             <!-- Имя -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Имя</label>
+                <label class="block mb-2 text-sm font-medium text-violet-700">Имя</label>
                 <input
                     v-model="form.name"
                     type="text"
                     placeholder="Как вас зовут?"
-                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white placeholder-cyan-300"
+                    class="w-full px-4 py-2 bg-white border border-violet-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 text-gray-700 placeholder-gray-400"
                 />
             </div>
 
             <!-- Возраст -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Возраст</label>
+                <label class="block mb-2 text-sm font-medium text-violet-700">Возраст</label>
                 <input
                     v-model.number="form.age"
                     type="number"
                     min="1"
                     max="120"
                     placeholder="Ваш возраст"
-                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white placeholder-cyan-300"
+                    class="w-full px-4 py-2 bg-white border border-violet-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 text-gray-700 placeholder-gray-400"
                 />
             </div>
 
             <!-- Описание -->
             <div>
-                <label class="block mb-2 text-sm font-medium text-cyan-200">Описание</label>
+                <label class="block mb-2 text-sm font-medium text-violet-700">Описание</label>
                 <textarea
                     v-model="form.bio"
                     rows="4"
                     placeholder="Напишите немного о себе..."
-                    class="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-400 text-white placeholder-cyan-300"
+                    class="w-full px-4 py-2 bg-white border border-violet-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-400 text-gray-700 placeholder-gray-400"
                 ></textarea>
-                <p class="text-xs text-cyan-400 mt-2 opacity-80">
+                <p class="text-xs text-violet-500 mt-2 opacity-80">
                     Чем подробнее вы расскажете о себе, тем точнее ИИ-аватары будут понимать вас и подстраиваться под ваш стиль общения.
                 </p>
             </div>
@@ -47,13 +47,13 @@
                 :disabled="!canSave || state === 'saving'"
                 @click="save"
                 class="group relative w-full h-12 rounded-xl font-semibold text-base transition-all overflow-hidden
-                       border border-white/10 backdrop-blur-md
-                       bg-gradient-to-r from-cyan-500/80 to-cyan-400/80
-                       hover:from-cyan-500 hover:to-cyan-400
+                       border border-violet-200 backdrop-blur-md
+                       bg-gradient-to-r from-violet-500/80 to-violet-400/80
+                       hover:from-violet-500 hover:to-violet-400
                        disabled:opacity-60 disabled:cursor-not-allowed
-                       [box-shadow:0_10px_30px_rgba(0,255,255,0.15)]"
+                       [box-shadow:0_10px_30px_rgba(139,92,246,0.15)]"
                 :class="{
-                    'pointer-events-none bg-gradient-to-r from-cyan-500/60 to-cyan-400/60': state === 'saving',
+                    'pointer-events-none bg-gradient-to-r from-violet-500/60 to-violet-400/60': state === 'saving',
                     'bg-gradient-to-r from-emerald-500 to-emerald-400': state === 'success',
                     'bg-gradient-to-r from-rose-500 to-rose-400': state === 'error'
                 }"

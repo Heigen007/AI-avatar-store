@@ -1,6 +1,6 @@
 <template>
-    <div class="min-h-screen bg-gradient-to-b from-[#0a192f] via-[#0f2c44] to-[#103848] flex items-center justify-center px-4">
-        <div class="w-full max-w-sm bg-white/10 backdrop-blur-2xl rounded-3xl border border-white/10 shadow-2xl p-6">
+    <div class="min-h-screen bg-gradient-to-b from-white via-violet-50 to-white flex items-center justify-center px-4">
+        <div class="w-full max-w-sm bg-white border border-violet-200 rounded-3xl shadow-2xl p-6">
         <transition name="fade" mode="out-in">
             <component
                 :is="currentComponent"
@@ -10,14 +10,14 @@
 
         <div class="flex justify-between mt-6">
             <button
-                class="text-cyan-300 font-medium disabled:opacity-30 transition"
+                class="text-violet-600 font-medium disabled:opacity-30 transition"
                 :disabled="stepIndex === 0"
                 @click="prevStep"
             >
                 Назад
             </button>
             <button
-                class="text-cyan-300 font-medium disabled:opacity-30 transition flex items-center gap-2"
+                class="text-violet-600 font-medium disabled:opacity-30 transition flex items-center gap-2"
                 :disabled="!canProceed || savingState === 'saving'"
                 @click="handleNext"
             >
@@ -25,7 +25,7 @@
                     {{ stepIndex < steps.length - 1 ? 'Далее' : 'Готово' }}
                 </template>
                 <template v-else-if="savingState === 'saving'">
-                    <span class="w-4 h-4 rounded-full border-2 border-cyan-300 border-t-transparent animate-spin"></span>
+                    <span class="w-4 h-4 rounded-full border-2 border-violet-400 border-t-transparent animate-spin"></span>
                     Сохраняю…
                 </template>
                 <template v-else-if="savingState === 'success'">
