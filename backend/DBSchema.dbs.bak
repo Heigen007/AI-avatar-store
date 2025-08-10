@@ -33,6 +33,9 @@
 			</column>
 			<column name="text" type="text" jt="12" />
 			<column name="image_url" type="text" jt="12" />
+			<column name="is_voice" type="boolean" jt="16" >
+				<defo><![CDATA[false]]></defo>
+			</column>
 			<index name="chatmessage_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -64,6 +67,7 @@
 			<column name="created_at" type="timestamp" length="6" jt="93" >
 				<defo><![CDATA[CURRENT_TIMESTAMP]]></defo>
 			</column>
+			<column name="user_id" type="integer" jt="4" />
 			<index name="feedback_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>

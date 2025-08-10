@@ -17,6 +17,9 @@
 			<column name="description" type="text" jt="12" >
 				<defo><![CDATA[''::text]]></defo>
 			</column>
+			<column name="voice" type="varchar" jt="12" mandatory="y" >
+				<defo><![CDATA['alloy'::character varying]]></defo>
+			</column>
 			<index name="avatar_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -33,6 +36,9 @@
 			</column>
 			<column name="text" type="text" jt="12" />
 			<column name="image_url" type="text" jt="12" />
+			<column name="is_voice" type="boolean" jt="16" >
+				<defo><![CDATA[false]]></defo>
+			</column>
 			<index name="chatmessage_pkey" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>

@@ -11,6 +11,9 @@ import { updateAvatar } from './services/updateAvatar';
 import { submitFeedback } from './services/submitFeedback';
 import { sendVoiceMessage } from './services/sendVoiceMessage';
 import { uploadImage, uploadVoice } from 'src/middleware/upload';
+import { getAdminStats } from './handlers/getAdminStats';
+import { getAdminChatsList } from './handlers/getAdminChatsList';
+import { getAdminChatsPage } from './handlers/getAdminChatsPage';
 
 const globalRouter: Router = express.Router();
 
@@ -44,5 +47,11 @@ globalRouter.put('/avatar/:id', updateAvatar)
 
 // 10. Загрузка изображения аватара
 globalRouter.post('/feedback', submitFeedback)
+
+// 11. Административная статистика
+globalRouter.get('/admin/stats', getAdminStats);
+
+globalRouter.get('/admin/chats', getAdminChatsPage);
+globalRouter.get('/admin/chats/list', getAdminChatsList);
 
 export { globalRouter };

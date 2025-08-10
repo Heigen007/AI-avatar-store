@@ -9,10 +9,11 @@ export async function processMessage(
     chatId: number,
     sender: 'user',
     text: string,
-    imageUrl?: string
+    imageUrl?: string,
+    isVoice: boolean = false
 ) {
     // 1. Сохраняем сообщение пользователя
-    const userMessage = await ChatMessage.send(chatId, sender, text, imageUrl)
+    const userMessage = await ChatMessage.send(chatId, sender, text, imageUrl, isVoice)
 
     // 2. Загружаем сессию и профиль
     const session = await ChatSession.getById(chatId)

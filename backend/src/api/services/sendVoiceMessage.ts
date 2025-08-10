@@ -19,7 +19,7 @@ export async function sendVoiceMessage(req: Request, res: Response) {
         const transcript = await OpenAIClient.transcribe(filePath)
 
         // 2. Создаем сообщение и ответ ИИ
-        const { userMessage, avatarMessage } = await processMessage(chatId, 'user', transcript)
+        const { userMessage, avatarMessage } = await processMessage(chatId, 'user', transcript, undefined, true)
 
         // 3. Генерируем голосовой ответ
         const ttsPath = await OpenAIClient.synthesizeSpeech(avatarMessage.text, chatSession?.avatar?.voice || 'alloy')

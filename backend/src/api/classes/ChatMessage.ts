@@ -7,20 +7,21 @@ export class ChatMessage {
         public chatSessionId: number,
         public text: string,
         public timestamp: string,
-        public imageUrl?: string
+        public imageUrl?: string,
+        public isVoice: boolean = false
     ) {}
 
     static async getAllByChatId(chatId: number): Promise<ChatMessage[]> {
         return await DatabaseConnection.runTransaction(async (session) => {
             const result = await session.dbExecuteSelect(
-                `SELECT id, sender, chat_session_id, text, timestamp, image_url
+                `SELECT id, sender, chat_session_id, text, timestamp, image_url, is_voice
                  FROM ChatMessage
                  WHERE chat_session_id = $1
                  ORDER BY timestamp ASC`,
                 [chatId]
             );
             return result.sqlResultRows.map(row =>
-                new ChatMessage(row.id, row.sender, row.chat_session_id, row.text, row.timestamp, row.image_url)
+                new ChatMessage(row.id, row.sender, row.chat_session_id, row.text, row.timestamp, row.image_url, row.is_voice == true)
             );
         });
     }
@@ -29,14 +30,15 @@ export class ChatMessage {
         chatId: number,
         sender: 'user' | 'avatar',
         text: string,
-        imageUrl?: string
+        imageUrl?: string,
+        isVoice: boolean = false
     ): Promise<ChatMessage> {
         return await DatabaseConnection.runTransaction(async (session) => {
             const result = await session.dbExecuteInsert(
-                `INSERT INTO ChatMessage (sender, chat_session_id, text, image_url, timestamp)
-                 VALUES ($1, $2, $3, $4, NOW())
-                 RETURNING id, sender, chat_session_id, text, image_url, timestamp`,
-                [sender, chatId, text, imageUrl || null]
+                `INSERT INTO ChatMessage (sender, chat_session_id, text, image_url, timestamp, is_voice)
+                 VALUES ($1, $2, $3, $4, NOW(), $5)
+                 RETURNING id, sender, chat_session_id, text, image_url, timestamp, is_voice`,
+                [sender, chatId, text, imageUrl || null, isVoice]
             )
 
             const row = result.sqlResultRows[0]
@@ -46,7 +48,8 @@ export class ChatMessage {
                 row.chat_session_id,
                 row.text,
                 row.timestamp,
-                row.image_url
+                row.image_url,
+                row.is_voice == true
             )
         })
     }
