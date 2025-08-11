@@ -65,7 +65,6 @@ import { UserProfile } from 'src/models/UserProfile'
 import { MessageSender } from 'src/utils/MessageSender'
 import VoiceCallModal from 'src/components/VoiceCallModal.vue'
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
-import { StatusBar, Style } from '@capacitor/status-bar'
 
 const router = useRouter()
 const route = useRoute()
