@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, nextTick, watch } from 'vue'
+import { onMounted, reactive, ref, nextTick, watch, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChatMessage } from 'src/models/ChatMessage'
 import ChatBubble from 'src/components/ChatBubble.vue'
@@ -65,10 +65,13 @@ import { UserProfile } from 'src/models/UserProfile'
 import { MessageSender } from 'src/utils/MessageSender'
 import VoiceCallModal from 'src/components/VoiceCallModal.vue'
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
+import { applyStatusBar } from 'src/utils/statusBar'
+import { App } from '@capacitor/app'
 
 const router = useRouter()
 const route = useRoute()
 const messageSender = new MessageSender()
+let removeResume: (() => void) | null = null
 
 const sessionId = route.params.sessionId as string
 const sessionRaw = UserProfile.currentUser?.getSessionBySessionId(sessionId)
@@ -99,6 +102,9 @@ async function takePhoto() {
         }
     } catch (error) {
         console.error('Camera error:', error)
+    } finally {
+        // критично: вернуть нужные параметры сразу после закрытия камеры/пикера
+        await applyStatusBar()
     }
 }
 
@@ -118,10 +124,20 @@ function scrollToBottom() {
     })
 }
 
-onMounted(() => {
+onMounted(async () => {
     setTimeout(() => {
         scrollToBottom()
     }, 400)
+    await applyStatusBar()
+    // на iOS после возврата из камеры стиль может сбрасываться
+    const resumeHandler = async () => {
+        await applyStatusBar()
+    }
+    const sub = await App.addListener('resume', resumeHandler)
+    removeResume = () => sub.remove()
+})
+onBeforeUnmount(() => {
+    if (removeResume) removeResume()
 })
 
 async function sendMessage() {
