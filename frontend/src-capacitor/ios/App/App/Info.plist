@@ -56,6 +56,9 @@
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Необходим доступ к фотогалерее</string>
 
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Используем идентификатор устройства для персонализации рекламы и аналитики</string>
+
     <!-- Facebook Config -->
     <key>FacebookAppID</key>
     <string>1811191799827771</string>

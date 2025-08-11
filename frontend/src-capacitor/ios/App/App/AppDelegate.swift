@@ -1,6 +1,7 @@
 import UIKit
 import Capacitor
 import FBSDKCoreKit
+import AppTrackingTransparency
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -11,27 +12,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        // Инициализация Facebook SDK
+        // Facebook SDK init
         ApplicationDelegate.shared.application(
             application,
             didFinishLaunchingWithOptions: launchOptions
         )
 
-        // Отправка события запуска в App Events (для атрибуции установок/запусков)
+        // ATT запрос + включение трекинга
+        requestTrackingPermission()
+
+        // Отправка события запуска
         AppEvents.shared.activateApp()
 
         return true
     }
 
-    // --- Остальные стандартные хуки оставлены пустыми ---
-    func applicationWillResignActive(_ application: UIApplication) { }
-    func applicationDidEnterBackground(_ application: UIApplication) { }
-    func applicationWillEnterForeground(_ application: UIApplication) { }
-    func applicationDidBecomeActive(_ application: UIApplication) { }
-    func applicationWillTerminate(_ application: UIApplication) { }
+    private func requestTrackingPermission() {
+        if #available(iOS 14, *) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                if status == .authorized {
+                    Settings.shared.isAdvertiserTrackingEnabled = true
+                } else {
+                    Settings.shared.isAdvertiserTrackingEnabled = false
+                }
+            }
+        } else {
+            Settings.shared.isAdvertiserTrackingEnabled = true
+        }
+    }
 
-    // URL-схемы: сначала пробуем Facebook (если когда-нибудь понадобится),
-    // затем проксируем в Capacitor
     func application(
         _ app: UIApplication,
         open url: URL,
@@ -43,7 +52,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
-    // Universal Links: для нашего кейса достаточно проксировать в Capacitor
     func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
