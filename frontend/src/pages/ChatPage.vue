@@ -134,7 +134,6 @@ onMounted(async () => {
     setTimeout(() => {
         scrollToBottom()
     }, 400)
-    await fixStatusBarAfterPicker() // на всякий
     const sub = await App.addListener('resume', async () => {
         await fixStatusBarAfterPicker()
     })
