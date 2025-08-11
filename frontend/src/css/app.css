@@ -32,14 +32,3 @@
 body {
     background-color: #091a2c;
 }
-
-.statusbar-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: env(safe-area-inset-top); /* высота верхнего safe area */
-    background-color: #ffffff; /* белый фон */
-    z-index: 9999; /* чтобы был над контентом */
-    pointer-events: none; /* чтобы клики проходили сквозь */
-}
