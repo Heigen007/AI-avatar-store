@@ -17,52 +17,42 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             didFinishLaunchingWithOptions: launchOptions
         )
 
-        // Отправка события "App Launch"
+        // Отправка события запуска в App Events (для атрибуции установок/запусков)
         AppEvents.shared.activateApp()
 
         return true
     }
 
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Переход в неактивное состояние (входящий звонок, SMS и т.д.)
-    }
+    // --- Остальные стандартные хуки оставлены пустыми ---
+    func applicationWillResignActive(_ application: UIApplication) { }
+    func applicationDidEnterBackground(_ application: UIApplication) { }
+    func applicationWillEnterForeground(_ application: UIApplication) { }
+    func applicationDidBecomeActive(_ application: UIApplication) { }
+    func applicationWillTerminate(_ application: UIApplication) { }
 
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Приложение ушло в фон
-    }
-
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Приложение возвращается на передний план
-    }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Приложение стало активным
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Приложение завершает работу
-    }
-
+    // URL-схемы: сначала пробуем Facebook (если когда-нибудь понадобится),
+    // затем проксируем в Capacitor
     func application(
         _ app: UIApplication,
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
     ) -> Bool {
-        // Обработка URL (в том числе для Facebook SDK)
         if ApplicationDelegate.shared.application(app, open: url, options: options) {
             return true
         }
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
+    // Universal Links: для нашего кейса достаточно проксировать в Capacitor
     func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
-        if ApplicationDelegate.shared.application(application, continue: userActivity, restorationHandler: restorationHandler) {
-            return true
-        }
-        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
+        return ApplicationDelegateProxy.shared.application(
+            application,
+            continue: userActivity,
+            restorationHandler: restorationHandler
+        )
     }
 }
