@@ -56,8 +56,8 @@
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Необходим доступ к фотогалерее</string>
 
-	<key>NSUserTrackingUsageDescription</key>
-	<string>Используем идентификатор устройства для персонализации рекламы и аналитики</string>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>Используем идентификатор устройства для аналитики</string>
 
     <!-- Facebook Config -->
     <key>FacebookAppID</key>
@@ -72,5 +72,18 @@
     <true/>
     <key>FacebookAdvertiserIDCollectionEnabled</key>
     <true/>
+
+    <!-- SKAdNetwork IDs for Meta -->
+    <key>SKAdNetworkItems</key>
+    <array>
+        <dict>
+            <key>SKAdNetworkIdentifier</key>
+            <string>v9wttpbfk9.skadnetwork</string>
+        </dict>
+        <dict>
+            <key>SKAdNetworkIdentifier</key>
+            <string>n38lu8286q.skadnetwork</string>
+        </dict>
+    </array>
 </dict>
 </plist>
