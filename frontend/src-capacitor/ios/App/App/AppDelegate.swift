@@ -12,16 +12,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        // Facebook SDK init
+        // Инициализация Facebook SDK
         ApplicationDelegate.shared.application(
             application,
             didFinishLaunchingWithOptions: launchOptions
         )
 
-        // ATT запрос + включение трекинга
+        // (опционально) включим автолог и логи в дебаге
+        #if DEBUG
+        Settings.shared.isAutoLogAppEventsEnabled = true
+        Settings.shared.isLoggingBehaviorEnabled = true
+        Settings.shared.loggingBehaviors = [.appEvents, .networkRequests]
+        #endif
+
+        // ATT-запрос (по правилам Apple лучше показывать не на первом кадре,
+        // но для теста можно и тут)
         requestTrackingPermission()
 
-        // Отправка события запуска
+        // Отправка события запуска в App Events
         AppEvents.shared.activateApp()
 
         return true
@@ -29,18 +37,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func requestTrackingPermission() {
         if #available(iOS 14, *) {
-            ATTrackingManager.requestTrackingAuthorization { status in
-                if status == .authorized {
-                    Settings.shared.isAdvertiserTrackingEnabled = true
-                } else {
-                    Settings.shared.isAdvertiserTrackingEnabled = false
+            DispatchQueue.main.async {
+                ATTrackingManager.requestTrackingAuthorization { _ in
+                    // Ничего не ставим вручную: SDK сам читает статус ATT
                 }
             }
-        } else {
-            Settings.shared.isAdvertiserTrackingEnabled = true
         }
     }
 
+    // URL-схемы: сначала Facebook, потом Capacitor
     func application(
         _ app: UIApplication,
         open url: URL,
@@ -52,11 +57,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
+    // Universal Links: корректный вызов без restorationHandler
     func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        if ApplicationDelegate.shared.application(application, continue: userActivity) {
+            return true
+        }
         return ApplicationDelegateProxy.shared.application(
             application,
             continue: userActivity,
