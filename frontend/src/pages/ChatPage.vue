@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref, nextTick, watch, onBeforeUnmount } from 'vue'
+import { onMounted, reactive, ref, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChatMessage } from 'src/models/ChatMessage'
 import ChatBubble from 'src/components/ChatBubble.vue'
@@ -65,19 +65,11 @@ import { UserProfile } from 'src/models/UserProfile'
 import { MessageSender } from 'src/utils/MessageSender'
 import VoiceCallModal from 'src/components/VoiceCallModal.vue'
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
-import { fixStatusBarAfterPicker, applyStatusBarBase } from 'src/utils/statusBar'
-import { App } from '@capacitor/app'
+import { StatusBar, Style } from '@capacitor/status-bar'
 
 const router = useRouter()
 const route = useRoute()
 const messageSender = new MessageSender()
-let removeResume: (() => void) | null = null
-const onFocus = async () => { await fixStatusBarAfterPicker() }
-const onVisibility = async () => {
-    if (document.visibilityState === 'visible') {
-        await fixStatusBarAfterPicker()
-    }
-}
 
 const sessionId = route.params.sessionId as string
 const sessionRaw = UserProfile.currentUser?.getSessionBySessionId(sessionId)
@@ -91,12 +83,11 @@ const imagePreviewUrl = ref<string | null>(null)
 
 const voiceModalOpen = ref(false)
 
-
 async function takePhoto() {
     try {
         const photo = await Camera.getPhoto({
             resultType: CameraResultType.Uri,
-            source: CameraSource.Prompt, // или Photos
+            source: CameraSource.Prompt,
             quality: 90
         })
 
@@ -106,11 +97,8 @@ async function takePhoto() {
             const blob = await response.blob()
             imageFile.value = new File([blob], 'photo.jpg', { type: blob.type })
         }
-    } catch (e) {
-        console.error('Camera error:', e)
-    } finally {
-        // Критично: именно для галереи
-        await fixStatusBarAfterPicker()
+    } catch (error) {
+        console.error('Camera error:', error)
     }
 }
 
@@ -130,21 +118,10 @@ function scrollToBottom() {
     })
 }
 
-onMounted(async () => {
+onMounted(() => {
     setTimeout(() => {
         scrollToBottom()
     }, 400)
-    const sub = await App.addListener('resume', async () => {
-        await fixStatusBarAfterPicker()
-    })
-    removeResume = () => sub.remove()
-    window.addEventListener('focus', onFocus)
-    document.addEventListener('visibilitychange', onVisibility)
-})
-onBeforeUnmount(() => {
- if (removeResume) removeResume()
-    window.removeEventListener('focus', onFocus)
-    document.removeEventListener('visibilitychange', onVisibility)
 })
 
 async function sendMessage() {
@@ -181,175 +158,3 @@ function openVoiceModal() {
     voiceModalOpen.value = true
 }
 </script>
-
-import Foundation
-import Capacitor
-
-public class StatusBar {
-
-    private var bridge: CAPBridgeProtocol
-    private var isOverlayingWebview: Bool!
-    private var backgroundColor: UIColor!
-    private var style: UIStatusBarStyle!
-    private var backgroundView: UIView?
-    private var observers: [NSObjectProtocol] = []
-
-    init(bridge: CAPBridgeProtocol, config: StatusBarConfig) {
-        self.bridge = bridge
-        setupObservers(with: config)
-    }
-
-    deinit {
-        observers.forEach { NotificationCenter.default.removeObserver($0) }
-    }
-
-    private func setupObservers(with config: StatusBarConfig) {
-        observers.append(NotificationCenter.default.addObserver(forName: .capacitorViewDidAppear, object: .none, queue: .none) { [weak self] _ in
-            self?.handleViewDidAppear(config: config)
-        })
-        observers.append(NotificationCenter.default.addObserver(forName: .capacitorStatusBarTapped, object: .none, queue: .none) { [weak self] _ in
-            self?.bridge.triggerJSEvent(eventName: "statusTap", target: "window")
-        })
-        observers.append(NotificationCenter.default.addObserver(forName: .capacitorViewWillTransition, object: .none, queue: .none) { [weak self] _ in
-            self?.handleViewWillTransition()
-        })
-    }
-
-    private func handleViewDidAppear(config: StatusBarConfig) {
-        setStyle(self.style ?? config.style)
-        setBackgroundColor(self.backgroundColor ?? config.backgroundColor)
-        setOverlaysWebView(self.isOverlayingWebview ?? config.overlaysWebView)
-    }
-
-    private func handleViewWillTransition() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-            self?.resizeStatusBarBackgroundView()
-            self?.resizeWebView()
-        }
-    }
-
-    func setStyle(_ style: UIStatusBarStyle) {
-        self.style = style
-        bridge.statusBarStyle = self.style
-    }
-
-    func setBackgroundColor(_ color: UIColor) {
-        self.backgroundColor = color
-        backgroundView?.backgroundColor = self.backgroundColor
-    }
-
-    func setAnimation(_ animation: String) {
-        if animation == "SLIDE" {
-            bridge.statusBarAnimation = .slide
-        } else if animation == "NONE" {
-            bridge.statusBarAnimation = .none
-        } else {
-            bridge.statusBarAnimation = .fade
-        }
-    }
-
-    func hide(animation: String) {
-        setAnimation(animation)
-        if bridge.statusBarVisible {
-            bridge.statusBarVisible = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-                self?.resizeWebView()
-                self?.backgroundView?.removeFromSuperview()
-                self?.backgroundView?.isHidden = true
-            }
-        }
-    }
-
-    func show(animation: String) {
-        setAnimation(animation)
-        if !bridge.statusBarVisible {
-            bridge.statusBarVisible = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
-                resizeWebView()
-                if !isOverlayingWebview {
-                    resizeStatusBarBackgroundView()
-                    bridge.webView?.superview?.addSubview(backgroundView!)
-                }
-                backgroundView?.isHidden = false
-            }
-        }
-    }
-
-    func getInfo() -> StatusBarInfo {
-        let style: String
-        switch bridge.statusBarStyle {
-        case .default:
-            style = "DEFAULT"
-        case .lightContent:
-            style = "DARK"
-        case .darkContent:
-            style = "LIGHT"
-        @unknown default:
-            style = "DEFAULT"
-        }
-
-        return StatusBarInfo(
-            overlays: isOverlayingWebview,
-            visible: bridge.statusBarVisible,
-            style: style,
-            color: UIColor.capacitor.hex(fromColor: backgroundColor),
-            height: getStatusBarFrame().size.height
-        )
-    }
-
-    func setOverlaysWebView(_ overlay: Bool) {
-        if overlay == isOverlayingWebview {
-            resizeWebView()
-            return
-        }
-        isOverlayingWebview = overlay
-        if overlay {
-            backgroundView?.removeFromSuperview()
-        } else {
-            initializeBackgroundViewIfNeeded()
-            bridge.webView?.superview?.addSubview(backgroundView!)
-        }
-        resizeWebView()
-    }
-
-    private func resizeWebView() {
-        guard
-            let webView = bridge.webView,
-            let bounds = bridge.viewController?.view.window?.windowScene?.screen.bounds
-        else { return }
-        bridge.viewController?.view.frame = bounds
-        webView.frame = bounds
-        let statusBarHeight = getStatusBarFrame().size.height
-        var webViewFrame = webView.frame
-
-        if isOverlayingWebview {
-            let safeAreaTop = webView.safeAreaInsets.top
-            if statusBarHeight >= safeAreaTop && safeAreaTop > 0 {
-                webViewFrame.origin.y = safeAreaTop == 40 ? 20 : statusBarHeight - safeAreaTop
-            } else {
-                webViewFrame.origin.y = 0
-            }
-        } else {
-            webViewFrame.origin.y = statusBarHeight
-        }
-        webViewFrame.size.height -= webViewFrame.origin.y
-        webView.frame = webViewFrame
-    }
-
-    private func resizeStatusBarBackgroundView() {
-        backgroundView?.frame = getStatusBarFrame()
-    }
-
-    private func getStatusBarFrame() -> CGRect {
-        return UIApplication.shared.windows.first(where: { $0.isKeyWindow })?.windowScene?.statusBarManager?.statusBarFrame ?? .zero
-    }
-
-    private func initializeBackgroundViewIfNeeded() {
-        if backgroundView == nil {
-            backgroundView = UIView(frame: getStatusBarFrame())
-            backgroundView!.backgroundColor = backgroundColor
-            backgroundView!.autoresizingMask = [.flexibleWidth, .flexibleBottomMargin]
-            backgroundView!.isHidden = !bridge.statusBarVisible
-        }
-    }
-}
