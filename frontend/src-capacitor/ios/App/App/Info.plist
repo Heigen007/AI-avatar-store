@@ -56,11 +56,18 @@
     <key>NSPhotoLibraryAddUsageDescription</key>
     <string>Необходим доступ к фотогалерее</string>
 
-    <!-- Facebook Login Config -->
+    <!-- Facebook Config -->
     <key>FacebookAppID</key>
     <string>1811191799827771</string>
     <key>FacebookDisplayName</key>
     <string>Repliky</string>
+    <key>FacebookClientToken</key>
+    <string>dc07100eb687c4dddcae0b57de95b31b</string>
 
+    <!-- Facebook SDK Flags -->
+    <key>FacebookAutoLogAppEventsEnabled</key>
+    <true/>
+    <key>FacebookAdvertiserIDCollectionEnabled</key>
+    <true/>
 </dict>
 </plist>
