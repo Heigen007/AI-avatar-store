@@ -24,29 +24,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Settings.shared.loggingBehaviors = [.appEvents, .networkRequests]
         #endif
 
-        // Отправка события запуска в App Events
-        AppEvents.shared.activateApp()
-
+        // ВАЖНО: activateApp переносим в applicationDidBecomeActive
         return true
     }
 
-    // Показ ATT-попапа после появления UI (надёжнее) и только один раз
+    // Показ ATT после появления UI + отправка activateApp
     func applicationDidBecomeActive(_ application: UIApplication) {
+        // Событие активизации приложения для Meta App Events
+        AppEvents.shared.activateApp()
+
+        // ATT-попап — только если статус не определён
         guard #available(iOS 14, *) else { return }
 
         let askedKey = "attPromptShown"
         if UserDefaults.standard.bool(forKey: askedKey) { return }
 
         if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
-            // Небольшая задержка, чтобы UI точно успел отрисоваться
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 ATTrackingManager.requestTrackingAuthorization { _ in
+                    // SDK сам читает статус ATT; сохраняем флаг, чтобы не тревожить пользователя повторно
                     UserDefaults.standard.set(true, forKey: askedKey)
-                    // Ничего вручную в FBSDK ставить не нужно — он сам читает статус ATT
                 }
             }
         } else {
-            // Уже определён (authorized/denied/limited) — фиксируем, чтобы не пытаться снова
+            // Статус уже определён (authorized/denied/restricted) — диалог больше не покажется
             UserDefaults.standard.set(true, forKey: askedKey)
         }
     }
@@ -63,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
-    // Universal Links: корректный вызов без restorationHandler для FBSDK
+    // Universal Links
     func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
@@ -79,7 +80,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    // Остальные хуки оставлены пустыми
+    // Остальные хуки (по необходимости)
     func applicationWillResignActive(_ application: UIApplication) { }
     func applicationDidEnterBackground(_ application: UIApplication) { }
     func applicationWillEnterForeground(_ application: UIApplication) { }
