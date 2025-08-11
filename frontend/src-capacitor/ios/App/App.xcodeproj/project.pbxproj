@@ -18,6 +18,8 @@
 		E73843A32E49DBD4007CCCA1 /* MyCapacitorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73843A22E49DBD4007CCCA1 /* MyCapacitorViewController.swift */; };
 		E73843A62E4A4BE7007CCCA1 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = E73843A52E4A4BE7007CCCA1 /* FacebookBasics */; };
 		E73843A82E4A4BE7007CCCA1 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = E73843A72E4A4BE7007CCCA1 /* FacebookCore */; };
+		E73843AA2E4A5308007CCCA1 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = E73843A92E4A5308007CCCA1 /* FacebookBasics */; };
+		E73843AC2E4A5308007CCCA1 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = E73843AB2E4A5308007CCCA1 /* FacebookCore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				A084ECDBA7D38E1E42DFC39D /* Pods_App.framework in Frameworks */,
+				E73843AC2E4A5308007CCCA1 /* FacebookCore in Frameworks */,
+				E73843AA2E4A5308007CCCA1 /* FacebookBasics in Frameworks */,
 				E73843A82E4A4BE7007CCCA1 /* FacebookCore in Frameworks */,
 				E73843A62E4A4BE7007CCCA1 /* FacebookBasics in Frameworks */,
 			);
@@ -430,7 +434,7 @@
 			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 14.1.0;
+				minimumVersion = 18.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -444,6 +448,14 @@
 		E73843A72E4A4BE7007CCCA1 /* FacebookCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E73843A42E4A4BE7007CCCA1 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		E73843A92E4A5308007CCCA1 /* FacebookBasics */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FacebookBasics;
+		};
+		E73843AB2E4A5308007CCCA1 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
 			productName = FacebookCore;
 		};
 /* End XCSwiftPackageProductDependency section */
