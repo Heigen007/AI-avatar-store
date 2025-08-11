@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-page-container class="safe-area-top safe-area-bottom relative myLayout overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
+    <q-page-container class="relative overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
       <router-view v-slot="{ Component, route }">
         <transition :name="transitionName">
           <div v-if="isUnderMaintenance" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-center text-white px-6">
@@ -62,7 +62,6 @@ watch(() => route.path, (toPath) => {
 
 const isUnderMaintenance = computed(() => UserProfile.currentUser === null)
 </script>
-
 
 <style scoped>
 /* Slide Left */

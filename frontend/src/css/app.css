@@ -32,12 +32,3 @@
 body {
     background-color: #091a2c;
 }
-
-.safe-area-top {
-    padding-top: 30px;     /* iOS 12+ */
-}
-
-/* Если нужен отступ снизу под “домик”/gesture area */
-.safe-area-bottom {
-    padding-bottom: 30px;
-}
