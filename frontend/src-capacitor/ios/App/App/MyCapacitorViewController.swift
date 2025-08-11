@@ -1,106 +1,68 @@
-// PluginViewController.swift
 import UIKit
 import Capacitor
-import WebKit
 
 class MyCapacitorViewController: CAPBridgeViewController {
-
-    private let chromeColor = UIColor(red: 0x09/255.0, green: 0x1A/255.0, blue: 0x2C/255.0, alpha: 1.0)
-
-    // "Планки" по краям вне safe area
-    private let topChrome = UIView()
-    private let bottomChrome = UIView()
-    private let leftChrome = UIView()
-    private let rightChrome = UIView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Цвет фона всего корневого вью (на всякий)
-        view.backgroundColor = chromeColor
+        view.backgroundColor = .white
+        webView?.backgroundColor = .white
 
-        // Сделать сам webView прозрачным, чтобы "хром" не перекрывался
-        if let wk = webView as? WKWebView {
-            wk.isOpaque = false
-            wk.backgroundColor = .clear
-            wk.scrollView.backgroundColor = .clear
-        } else {
-            webView?.isOpaque = false
-            webView?.backgroundColor = .clear
-        }
-
-        // Добавляем цветные планки позади webView
-        for v in [topChrome, bottomChrome, leftChrome, rightChrome] {
-            v.backgroundColor = chromeColor
-            v.isUserInteractionEnabled = false
-            view.addSubview(v)
-        }
-
-        // Твоя текущая логика отступов — оставляем
+        // Setup padding after the view has been added to the view hierarchy
         DispatchQueue.main.async {
+            self.setupStatusBarBackground()
             self.setupWebViewPadding()
         }
     }
 
-    override func viewWillAppear(_ animated: Bool) {
+    override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        //Setup padding each time the view appears
         DispatchQueue.main.async {
             self.setupWebViewPadding()
         }
     }
 
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        setupWebViewPadding()
-    }
-
-    override func viewDidLayoutSubviews() {
+    override open func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        layoutChrome()
-        if let webView = webView { view.bringSubviewToFront(webView) }
-    }
 
-    // Светлый текст в статус-баре под тёмный фон
-    override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
+        //Setup padding whenever the view's layout changes (e.g. orientation changes)
+        setupWebViewPadding()
+    }   
 
-    private func layoutChrome() {
-        let insets = view.safeAreaInsets
-        let b = view.bounds
-
-        // верхняя "полоска" — от верхней кромки экрана до safe area
-        topChrome.frame = CGRect(x: 0, y: 0, width: b.width, height: insets.top)
-
-        // нижняя — от safe area до низа (домашняя индикаторная зона)
-        bottomChrome.frame = CGRect(x: 0, y: b.height - insets.bottom, width: b.width, height: insets.bottom)
-
-        // боковые уши (актуально в ландшафте/на iPad с вырезами)
-        leftChrome.frame = CGRect(x: 0, y: insets.top, width: insets.left, height: b.height - insets.top - insets.bottom)
-        rightChrome.frame = CGRect(x: b.width - insets.right, y: insets.top, width: insets.right, height: b.height - insets.top - insets.bottom)
-    }
-
-    // ---- твой код без изменений ----
     private func setupWebViewPadding() {
         guard let webView = self.webView else { return }
 
-        var topPadding: CGFloat = 0
-        var bottomPadding: CGFloat = 0
+        var topPadding: CGFloat = 0        
         var leftPadding: CGFloat = 0
         var rightPadding: CGFloat = 0
 
         if #available(iOS 13.0, *) {
             let window = view.window ?? UIApplication.shared.windows.first { $0.isKeyWindow }
-            topPadding = window?.safeAreaInsets.top ?? 0
-            bottomPadding = window?.safeAreaInsets.bottom ?? 0
+
+            topPadding = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0            
             leftPadding = window?.safeAreaInsets.left ?? 0
             rightPadding = window?.safeAreaInsets.right ?? 0
+
         } else {
-            topPadding = UIApplication.shared.statusBarFrame.height
+            topPadding = UIApplication.shared.statusBarFrame.size.height
         }
 
         webView.frame.origin = CGPoint(x: leftPadding, y: topPadding)
         webView.frame.size = CGSize(
-            width: UIScreen.main.bounds.width - leftPadding - rightPadding,
-            height: UIScreen.main.bounds.height - topPadding - bottomPadding
-        )
+            width: UIScreen.main.bounds.width - leftPadding - rightPadding, height: UIScreen.main.bounds.height - topPadding)
+    }
+
+    private func setupStatusBarBackground() {
+        if #available(iOS 13.0, *) {
+            let statusBar = UIView(frame: UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
+            statusBar.backgroundColor = .white
+            UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.addSubview(statusBar)
+        } else {
+            let statusBar = UIApplication.shared.value(forKey: "statusBarWindow.statusBar") as? UIView
+            statusBar?.backgroundColor = .white
+        }
     }
 }
