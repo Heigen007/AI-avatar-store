@@ -18,14 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             didFinishLaunchingWithOptions: launchOptions
         )
 
-        // DEBUG-логирование SDK (по желанию)
+        // DEBUG-логи SDK (опционально)
         #if DEBUG
         Settings.shared.isAutoLogAppEventsEnabled = true
         Settings.shared.loggingBehaviors = [.appEvents, .networkRequests]
         #endif
-
-        // ATT-запрос (для теста можно здесь; лучше показывать позже в реальном UX)
-        requestTrackingPermission()
 
         // Отправка события запуска в App Events
         AppEvents.shared.activateApp()
@@ -33,13 +30,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
-    private func requestTrackingPermission() {
-        if #available(iOS 14, *) {
-            DispatchQueue.main.async {
+    // Показ ATT-попапа после появления UI (надёжнее) и только один раз
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        guard #available(iOS 14, *) else { return }
+
+        let askedKey = "attPromptShown"
+        if UserDefaults.standard.bool(forKey: askedKey) { return }
+
+        if ATTrackingManager.trackingAuthorizationStatus == .notDetermined {
+            // Небольшая задержка, чтобы UI точно успел отрисоваться
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 ATTrackingManager.requestTrackingAuthorization { _ in
-                    // Ничего вручную не выставляем — SDK сам читает статус ATT
+                    UserDefaults.standard.set(true, forKey: askedKey)
+                    // Ничего вручную в FBSDK ставить не нужно — он сам читает статус ATT
                 }
             }
+        } else {
+            // Уже определён (authorized/denied/limited) — фиксируем, чтобы не пытаться снова
+            UserDefaults.standard.set(true, forKey: askedKey)
         }
     }
 
@@ -75,6 +83,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillResignActive(_ application: UIApplication) { }
     func applicationDidEnterBackground(_ application: UIApplication) { }
     func applicationWillEnterForeground(_ application: UIApplication) { }
-    func applicationDidBecomeActive(_ application: UIApplication) { }
     func applicationWillTerminate(_ application: UIApplication) { }
 }
