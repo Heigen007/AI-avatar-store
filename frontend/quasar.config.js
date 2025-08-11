@@ -57,7 +57,7 @@ build: {
     productName: 'Repliky',
     extendPackageJson(pkg) {
         pkg.name = 'repliky'
-        pkg.version = '1.2'
+        pkg.version = '1.3'
         pkg.description = 'Общайся с персональным AI-аватаром!'
         pkg.author = 'Grigoriy Kovrizhnykh <grisakovr@gmail.com>'
     }
