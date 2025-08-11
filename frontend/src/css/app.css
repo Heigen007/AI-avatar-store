@@ -34,10 +34,10 @@ body {
 }
 
 .safe-area-top {
-    padding-top: env(safe-area-inset-top);      /* iOS 12+ */
+    padding-top: 30px;     /* iOS 12+ */
 }
 
 /* Если нужен отступ снизу под “домик”/gesture area */
 .safe-area-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+    padding-bottom: 30px;
 }
