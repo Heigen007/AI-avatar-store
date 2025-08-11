@@ -3,13 +3,17 @@ import UIKit
 import Capacitor
 
 class MyCapacitorViewController: CAPBridgeViewController {
-    override open func viewDidLoad() {
+
+    override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Красим фон всего нативного контейнера в белый
+        // Красим ВСЁ нативное окружение в белый
         view.backgroundColor = .white
+        navigationController?.view.backgroundColor = .white
+        parent?.view?.backgroundColor = .white
+        view.window?.backgroundColor = .white
 
-        // Красим фон самого webView и убираем черную непрозрачность
+        // Красим сам WKWebView, чтобы нигде не проступал чёрный
         if let webView = self.webView {
             webView.isOpaque = false
             webView.backgroundColor = .white
@@ -21,41 +25,50 @@ class MyCapacitorViewController: CAPBridgeViewController {
         }
     }
 
-    override open func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         DispatchQueue.main.async {
             self.setupWebViewPadding()
         }
     }
 
-    override open func viewWillLayoutSubviews() {
+    override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
+        setupWebViewPadding()
+    }
+
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
         setupWebViewPadding()
     }
 
     private func setupWebViewPadding() {
         guard let webView = self.webView else { return }
 
-        var topPadding: CGFloat = 0
-        var bottomPadding: CGFloat = 0
-        var leftPadding: CGFloat = 0
-        var rightPadding: CGFloat = 0
-
+        // Берём актуальные инсетсы из окна (если уже есть) или из view
+        let insets: UIEdgeInsets
         if #available(iOS 13.0, *) {
-            let window = view.window ?? UIApplication.shared.windows.first { $0.isKeyWindow }
-            let insets = window?.safeAreaInsets ?? view.safeAreaInsets
-            topPadding = insets.top
-            bottomPadding = insets.bottom
-            leftPadding = insets.left
-            rightPadding = insets.right
+            insets = (view.window?.safeAreaInsets ?? view.safeAreaInsets)
         } else {
-            topPadding = UIApplication.shared.statusBarFrame.height
+            insets = view.safeAreaInsets
         }
 
-        webView.frame.origin = CGPoint(x: leftPadding, y: topPadding)
+        let left = insets.left
+        let right = insets.right
+        let top = insets.top
+        let bottom = insets.bottom
+
+        // Лэйаутим webView как у тебя: внутри safe-area (с отступами)
+        let screenBounds = UIScreen.main.bounds
+        webView.frame.origin = CGPoint(x: left, y: top)
         webView.frame.size = CGSize(
-            width: UIScreen.main.bounds.width - leftPadding - rightPadding,
-            height: UIScreen.main.bounds.height - topPadding - bottomPadding
+            width: screenBounds.width - left - right,
+            height: screenBounds.height - top - bottom
         )
+
+        // Дублируем белый фон на случай пересоздания/перелайаута
+        view.backgroundColor = .white
+        webView.backgroundColor = .white
+        webView.scrollView.backgroundColor = .white
     }
 }
