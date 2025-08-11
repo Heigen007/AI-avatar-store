@@ -83,6 +83,17 @@ const imagePreviewUrl = ref<string | null>(null)
 
 const voiceModalOpen = ref(false)
 
+async function restoreStatusBar() {
+    try {
+        await StatusBar.show();
+        await StatusBar.setOverlaysWebView({ overlay: false });
+        await StatusBar.setBackgroundColor({ color: '#091a2c' });
+        await StatusBar.setStyle({ style: Style.Light });
+    } catch (e) {
+        console.warn('StatusBar restore failed', e);
+    }
+}
+
 async function takePhoto() {
     try {
         const photo = await Camera.getPhoto({
@@ -90,10 +101,6 @@ async function takePhoto() {
             source: CameraSource.Prompt,
             quality: 90
         })
-
-        await StatusBar.setOverlaysWebView({ overlay: false })
-        await StatusBar.setBackgroundColor({ color: '#091a2c' })
-        await StatusBar.setStyle({ style: Style.Light })
 
         if (photo?.webPath) {
             imagePreviewUrl.value = photo.webPath
@@ -103,6 +110,9 @@ async function takePhoto() {
         }
     } catch (error) {
         console.error('Camera error:', error)
+    } finally {
+        // важен маленький timeout — без него iOS иногда игнорит команды
+        setTimeout(restoreStatusBar, 80);
     }
 }
 
