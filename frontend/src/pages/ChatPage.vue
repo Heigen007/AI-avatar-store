@@ -65,13 +65,19 @@ import { UserProfile } from 'src/models/UserProfile'
 import { MessageSender } from 'src/utils/MessageSender'
 import VoiceCallModal from 'src/components/VoiceCallModal.vue'
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
-import { applyStatusBar } from 'src/utils/statusBar'
+import { fixStatusBarAfterPicker, applyStatusBarBase } from 'src/utils/statusBar'
 import { App } from '@capacitor/app'
 
 const router = useRouter()
 const route = useRoute()
 const messageSender = new MessageSender()
 let removeResume: (() => void) | null = null
+const onFocus = async () => { await fixStatusBarAfterPicker() }
+const onVisibility = async () => {
+    if (document.visibilityState === 'visible') {
+        await fixStatusBarAfterPicker()
+    }
+}
 
 const sessionId = route.params.sessionId as string
 const sessionRaw = UserProfile.currentUser?.getSessionBySessionId(sessionId)
@@ -90,7 +96,7 @@ async function takePhoto() {
     try {
         const photo = await Camera.getPhoto({
             resultType: CameraResultType.Uri,
-            source: CameraSource.Prompt,
+            source: CameraSource.Prompt, // или Photos
             quality: 90
         })
 
@@ -100,11 +106,11 @@ async function takePhoto() {
             const blob = await response.blob()
             imageFile.value = new File([blob], 'photo.jpg', { type: blob.type })
         }
-    } catch (error) {
-        console.error('Camera error:', error)
+    } catch (e) {
+        console.error('Camera error:', e)
     } finally {
-        // критично: вернуть нужные параметры сразу после закрытия камеры/пикера
-        await applyStatusBar()
+        // Критично: именно для галереи
+        await fixStatusBarAfterPicker()
     }
 }
 
@@ -128,15 +134,18 @@ onMounted(async () => {
     setTimeout(() => {
         scrollToBottom()
     }, 400)
-    // на iOS после возврата из камеры стиль может сбрасываться
-    const resumeHandler = async () => {
-        await applyStatusBar()
-    }
-    const sub = await App.addListener('resume', resumeHandler)
+    await fixStatusBarAfterPicker() // на всякий
+    const sub = await App.addListener('resume', async () => {
+        await fixStatusBarAfterPicker()
+    })
     removeResume = () => sub.remove()
+    window.addEventListener('focus', onFocus)
+    document.addEventListener('visibilitychange', onVisibility)
 })
 onBeforeUnmount(() => {
-    if (removeResume) removeResume()
+ if (removeResume) removeResume()
+    window.removeEventListener('focus', onFocus)
+    document.removeEventListener('visibilitychange', onVisibility)
 })
 
 async function sendMessage() {
