@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-page-container class="relative overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
+    <q-page-container class="relative myLayout overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
       <router-view v-slot="{ Component, route }">
         <transition :name="transitionName">
           <div v-if="isUnderMaintenance" class="absolute inset-0 w-full h-full flex flex-col items-center justify-center text-center text-white px-6">
@@ -25,10 +25,10 @@
         active-color="cyan-400"
         indicator-color="cyan-400"
       >
-        <q-route-tab content-class="q-mb-sm" label="Профиль" icon="person" to="/profile" />
-        <q-route-tab content-class="q-mb-sm" label="Аватары" icon="people" to="/home" />
-        <q-route-tab content-class="q-mb-sm" label="Чаты" icon="chat" to="/chats" />
-        <q-route-tab content-class="q-mb-sm" label="Отзыв" icon="feedback" to="/feedback" />
+        <q-route-tab label="Профиль" icon="person" to="/profile" />
+        <q-route-tab label="Аватары" icon="people" to="/home" />
+        <q-route-tab label="Чаты" icon="chat" to="/chats" />
+        <q-route-tab label="Отзыв" icon="feedback" to="/feedback" />
       </q-tabs>
     </q-footer>
   </q-layout>
@@ -62,6 +62,13 @@ watch(() => route.path, (toPath) => {
 
 const isUnderMaintenance = computed(() => UserProfile.currentUser === null)
 </script>
+
+<style>
+.myLayout {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+</style>
 
 <style scoped>
 /* Slide Left */
