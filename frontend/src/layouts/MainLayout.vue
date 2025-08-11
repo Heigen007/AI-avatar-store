@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" class="safe-area-top safe-area-bottom">
     <q-page-container class="relative myLayout overflow-hidden bg-[#0a1c2f]" style="padding-bottom: 0; height: 100vh">
       <router-view v-slot="{ Component, route }">
         <transition :name="transitionName">

@@ -17,7 +17,11 @@
 
 <script setup lang="ts">
 import { UserProfile } from 'src/models/UserProfile'
+import { StatusBar, Style } from '@capacitor/status-bar';
 
+StatusBar.setOverlaysWebView({ overlay: true });
+// StatusBar.setBackgroundColor({ color: '#091a2c' });
+// StatusBar.setStyle({ style: Style.Light });
 </script>
 
 <style>
