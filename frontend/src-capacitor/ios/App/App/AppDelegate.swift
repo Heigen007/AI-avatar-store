@@ -18,15 +18,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             didFinishLaunchingWithOptions: launchOptions
         )
 
-        // (опционально) включим автолог и логи в дебаге
+        // DEBUG-логирование SDK (по желанию)
         #if DEBUG
         Settings.shared.isAutoLogAppEventsEnabled = true
-        Settings.shared.isLoggingBehaviorEnabled = true
         Settings.shared.loggingBehaviors = [.appEvents, .networkRequests]
         #endif
 
-        // ATT-запрос (по правилам Apple лучше показывать не на первом кадре,
-        // но для теста можно и тут)
+        // ATT-запрос (для теста можно здесь; лучше показывать позже в реальном UX)
         requestTrackingPermission()
 
         // Отправка события запуска в App Events
@@ -39,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 14, *) {
             DispatchQueue.main.async {
                 ATTrackingManager.requestTrackingAuthorization { _ in
-                    // Ничего не ставим вручную: SDK сам читает статус ATT
+                    // Ничего вручную не выставляем — SDK сам читает статус ATT
                 }
             }
         }
@@ -57,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
-    // Universal Links: корректный вызов без restorationHandler
+    // Universal Links: корректный вызов без restorationHandler для FBSDK
     func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
@@ -72,4 +70,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             restorationHandler: restorationHandler
         )
     }
+
+    // Остальные хуки оставлены пустыми
+    func applicationWillResignActive(_ application: UIApplication) { }
+    func applicationDidEnterBackground(_ application: UIApplication) { }
+    func applicationWillEnterForeground(_ application: UIApplication) { }
+    func applicationDidBecomeActive(_ application: UIApplication) { }
+    func applicationWillTerminate(_ application: UIApplication) { }
 }
