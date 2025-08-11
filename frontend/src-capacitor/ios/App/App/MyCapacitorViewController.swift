@@ -1,68 +1,77 @@
+// PluginViewController.swift
 import UIKit
 import Capacitor
+import WebKit
 
-class MyCapacitorViewController: CAPBridgeViewController {
+class MyCapacitorViewController: CAPBridgeViewController, CAPBridgeDelegate {
 
-    override func viewDidLoad() {
+    override open func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = UIColor.white // цвет фона за пределами webView
 
-        view.backgroundColor = .white
-        webView?.backgroundColor = .white
-
-        // Setup padding after the view has been added to the view hierarchy
         DispatchQueue.main.async {
-            self.setupStatusBarBackground()
-            self.setupWebViewPadding()
+            self.setupWebViewFrameAndStatusBar()
         }
     }
 
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        //Setup padding each time the view appears
         DispatchQueue.main.async {
-            self.setupWebViewPadding()
+            self.setupWebViewFrameAndStatusBar()
         }
     }
 
-    override open func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override open func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        setupWebViewFrameAndStatusBar()
+    }
 
-        //Setup padding whenever the view's layout changes (e.g. orientation changes)
-        setupWebViewPadding()
-    }   
-
-    private func setupWebViewPadding() {
+    private func setupWebViewFrameAndStatusBar() {
         guard let webView = self.webView else { return }
 
-        var topPadding: CGFloat = 0        
+        var topPadding: CGFloat = 0
+        var bottomPadding: CGFloat = 0
         var leftPadding: CGFloat = 0
         var rightPadding: CGFloat = 0
 
         if #available(iOS 13.0, *) {
-            let window = view.window ?? UIApplication.shared.windows.first { $0.isKeyWindow }
-
-            topPadding = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0            
+            let window = view.window ?? UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first?.windows.first { $0.isKeyWindow }
+            topPadding = window?.safeAreaInsets.top ?? 0
+            bottomPadding = window?.safeAreaInsets.bottom ?? 0
             leftPadding = window?.safeAreaInsets.left ?? 0
             rightPadding = window?.safeAreaInsets.right ?? 0
 
+            // подложка под статус-бар
+            if let statusBarFrame = window?.windowScene?.statusBarManager?.statusBarFrame {
+                let statusBarView = UIView(frame: statusBarFrame)
+                statusBarView.backgroundColor = UIColor.white // твой цвет
+                if statusBarView.superview == nil {
+                    window?.addSubview(statusBarView)
+                }
+            }
+
         } else {
-            topPadding = UIApplication.shared.statusBarFrame.size.height
+            topPadding = UIApplication.shared.statusBarFrame.height
+            if let statusBar = UIApplication.shared.value(forKey: "statusBar") as? UIView {
+                statusBar.backgroundColor = UIColor.white // твой цвет
+            }
         }
 
         webView.frame.origin = CGPoint(x: leftPadding, y: topPadding)
         webView.frame.size = CGSize(
-            width: UIScreen.main.bounds.width - leftPadding - rightPadding, height: UIScreen.main.bounds.height - topPadding)
+            width: UIScreen.main.bounds.width - leftPadding - rightPadding,
+            height: UIScreen.main.bounds.height - topPadding - bottomPadding
+        )
     }
 
-    private func setupStatusBarBackground() {
-        if #available(iOS 13.0, *) {
-            let statusBar = UIView(frame: UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.windowScene?.statusBarManager?.statusBarFrame ?? CGRect.zero)
-            statusBar.backgroundColor = .white
-            UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.addSubview(statusBar)
-        } else {
-            let statusBar = UIApplication.shared.value(forKey: "statusBarWindow.statusBar") as? UIView
-            statusBar?.backgroundColor = .white
-        }
+    // реализация протокола CAPBridgeDelegate
+    public var bridgedWebView: WKWebView? {
+        return self.webView
+    }
+
+    public var bridgedViewController: UIViewController? {
+        return self
     }
 }
