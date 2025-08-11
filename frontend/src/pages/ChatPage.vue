@@ -128,7 +128,6 @@ onMounted(async () => {
     setTimeout(() => {
         scrollToBottom()
     }, 400)
-    await applyStatusBar()
     // на iOS после возврата из камеры стиль может сбрасываться
     const resumeHandler = async () => {
         await applyStatusBar()
