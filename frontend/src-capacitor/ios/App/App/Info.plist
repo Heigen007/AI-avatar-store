@@ -57,7 +57,7 @@
     <string>Необходим доступ к фотогалерее</string>
 
     <key>NSUserTrackingUsageDescription</key>
-    <string>Используем идентификатор устройства для аналитики</string>
+    <string>We use your device’s advertising identifier to measure the performance of our ads across apps and websites owned by other companies. For example, we attribute installs and in-app events to our Meta ad campaigns.</string>
 
     <!-- Facebook Config -->
     <key>FacebookAppID</key>
